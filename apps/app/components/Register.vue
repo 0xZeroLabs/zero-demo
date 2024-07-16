@@ -13,7 +13,7 @@
                     @click.prevent="submitEmail" @keyup.enter="submitEmail">
                     <span>{{ value }}</span>
                 </button>
-                {{ address }}
+                Address: {{ address }}
                 <WaitlistFeedback :formFeedback="(formFeedback as string)" :isLoading="isLoading" />
             </form>
         </div>
