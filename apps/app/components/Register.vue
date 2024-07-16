@@ -13,6 +13,11 @@
                     @click.prevent="submitEmail" @keyup.enter="submitEmail">
                     <span>{{ value }}</span>
                 </button>
+                <button type="submit"
+                    class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
+                    @click.prevent="authenticate" @keyup.enter="">
+                    <span>Sign In</span>
+                </button>
                 Address: {{ address }}
                 <WaitlistFeedback :formFeedback="(formFeedback as string)" :isLoading="isLoading" />
             </form>
@@ -33,10 +38,6 @@ type FormFeedbackType =
     | null;
 
 const email = ref("");
-const userInput = ref({
-    username: email.value,
-    userDisplayName: email.value,
-})
 
 const ress = ref();
 const consent = ref(true);
@@ -47,22 +48,28 @@ const authenticating = ref(false);
 const authenticated = ref(false);
 const authenticatedHeader = ref({});
 const address = ref("");
-const { passport } = usePassport("3119486d-8561-4f87-a507-39241c78fae6");
+const { passport } = usePassport("07907e39-63c6-4b0b-bca8-377d26445172");
 console.log(passport)
 const formFeedback: Ref<FormFeedbackType> = ref(null);
 
 async function authenticate() {
     authenticating.value = true;
     try {
+        const userInput = ref({
+            username: email.value,
+            userDisplayName: email.value,
+        })
         await passport.setupEncryption();
         const [authenticatedH, addr] = await passport.authenticate(
             userInput.value
         )!;
+        console.log("here")
         authenticatedHeader.value = authenticatedH;
         address.value = addr;
         authenticated.value = true;
+        email.value = "";
     } catch (error) {
-        console.error("Error registering:", error);
+        console.error("Error authenticating:", error);
     } finally {
         authenticating.value = false;
     }
@@ -98,12 +105,15 @@ const submitEmail = async () => {
         setTimeout(async () => {
             try {
                 registering.value = true;
+                const userInput = ref({
+                    username: email.value,
+                    userDisplayName: email.value,
+                })
                 try {
                     await passport.setupEncryption();
                     const res = await passport.register(userInput.value);
                     console.log(res);
 
-                    email.value = "";
                     formFeedback.value = "success";
                     success.value = true;
 
