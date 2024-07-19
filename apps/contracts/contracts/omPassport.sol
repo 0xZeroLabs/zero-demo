@@ -16,19 +16,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract omPassport is ERC721, ERC721URIStorage {
     uint256 private _tokenIdCounter;
 
-    enum VerificationStatus {
-        Pending,
-        Verified,
-        RE,
-        Blacklisted
-    }
-
     struct Soul {
-        // contains zKYC Hash
-        string identity;
+        // contains ID Wallet Address
+        address identity;
         // add issuer specific fields below
-        uint256 score;
-        VerificationStatus status;
         uint256 created;
         uint256 updated;
     }
@@ -45,8 +36,6 @@ contract omPassport is ERC721, ERC721URIStorage {
     event Mint(address _soul);
     event Burn(address _soul);
     event Update(address _soul);
-    event SetProfile(address _profiler, address _soul);
-    event RemoveProfile(address _profiler, address _soul);
 
     constructor() ERC721("OmniPassport", "omPASS") {
         operator = msg.sender;
@@ -63,14 +52,13 @@ contract omPassport is ERC721, ERC721URIStorage {
         return from;
     }
 
-    function mint(address _soul, Soul memory _soulData) external {
+    function mint(address _soul, address _id) external {
         require(
             keccak256(bytes(souls[_soul].identity)) == zeroHash,
             "Soul already exists"
         );
         require(msg.sender == operator, "Only operator can mint new souls");
-        souls[_soul] = _soulData;
-        souls[_soul].status = VerificationStatus.Verified;
+        souls[_soul].identity = _id;
         souls[_soul].created = block.timestamp;
         _tokenIdCounter += 1;
         _mint(_soul, _tokenIdCounter);
@@ -107,13 +95,13 @@ contract omPassport is ERC721, ERC721URIStorage {
         return super.tokenURI(tokenId);
     }
 
-    function update(address _soul, Soul memory _soulData) external {
+    function update(address _soul, address _id) external {
         require(msg.sender == operator, "Only operator can update soul data");
         require(
             keccak256(bytes(souls[_soul].identity)) != zeroHash,
             "Soul does not exist"
         );
-        souls[_soul] = _soulData;
+        souls[_soul].identity = _id;
         souls[_soul].updated = block.timestamp;
         emit Update(_soul);
     }
@@ -128,57 +116,5 @@ contract omPassport is ERC721, ERC721URIStorage {
 
     function getSoul(address _soul) external view returns (Soul memory) {
         return souls[_soul];
-    }
-
-    /**
-     * Profiles are used by 3rd parties and individual users to store data.
-     * Data is stored in a nested mapping relative to msg.sender
-     * By default they can only store data on addresses that have been minted
-     */
-    function setProfile(address _soul, Soul memory _soulData) external {
-        require(
-            keccak256(bytes(souls[_soul].identity)) != zeroHash,
-            "Cannot create a profile for a soul that has not been minted"
-        );
-        soulProfiles[msg.sender][_soul] = _soulData;
-        profiles[_soul].push(msg.sender);
-        emit SetProfile(msg.sender, _soul);
-    }
-
-    function getProfile(
-        address _profiler,
-        address _soul
-    ) external view returns (Soul memory) {
-        return soulProfiles[_profiler][_soul];
-    }
-
-    function listProfiles(
-        address _soul
-    ) external view returns (address[] memory) {
-        return profiles[_soul];
-    }
-
-    function hasProfile(
-        address _profiler,
-        address _soul
-    ) public view returns (bool) {
-        if (
-            keccak256(bytes(soulProfiles[_profiler][_soul].identity)) ==
-            zeroHash
-        ) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function removeProfile(address _profiler, address _soul) external {
-        require(
-            msg.sender == _soul,
-            "Only users have rights to delete their profile data"
-        );
-        require(hasProfile(_profiler, _soul), "Profile does not exist");
-        delete soulProfiles[_profiler][msg.sender];
-        emit RemoveProfile(_profiler, _soul);
     }
 }

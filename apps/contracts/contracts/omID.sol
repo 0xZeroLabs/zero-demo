@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "./hypernode/OmniSend.sol";
 
 /**
  * An experiment in Soul Bound Tokens (SBT's) following Vitalik's
@@ -13,6 +14,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
  * Based around ERC721 standards
  */
 
+
+// burning and updating across chain has to be implemented with the help of a registry for wallets
 contract omID is ERC721, ERC721URIStorage {
     uint256 private _tokenIdCounter;
 
@@ -21,6 +24,11 @@ contract omID is ERC721, ERC721URIStorage {
         Verified,
         RE,
         Blacklisted
+    }
+
+    struct State {
+        address id,
+        address soul
     }
 
     struct Soul {
@@ -63,14 +71,14 @@ contract omID is ERC721, ERC721URIStorage {
         return from;
     }
 
-    function mint(address _soul, Soul memory _soulData) external {
+    function mint(address _soul) external {
         require(
             keccak256(bytes(souls[_soul].identity)) == zeroHash,
             "Soul already exists"
         );
         require(msg.sender == operator, "Only operator can mint new souls");
         souls[_soul] = _soulData;
-        souls[_soul].status = VerificationStatus.Verified;
+        souls[_soul].status = VerificationStatus.Pending;
         souls[_soul].created = block.timestamp;
         _tokenIdCounter += 1;
         _mint(_soul, _tokenIdCounter);
@@ -90,6 +98,17 @@ contract omID is ERC721, ERC721URIStorage {
         _burn(1);
         super._burn(1);
         emit Burn(_soul);
+    }
+
+    function delegate(address _outbox, int _destination, string _recipient, Action _action, address _id, address _soul) external {
+        require(
+            msg.sender == operator,
+            "Only operators have rights to mint users omPas"
+        );
+        State _state;
+        _state.id = _id;
+        _state.soul = _soul;
+        OmniSend.send(_outbox, _destination, _recipient, 0, _state)
     }
 
     function supportsInterface(
@@ -114,6 +133,17 @@ contract omID is ERC721, ERC721URIStorage {
             "Soul does not exist"
         );
         souls[_soul] = _soulData;
+        souls[_soul].updated = block.timestamp;
+        emit Update(_soul);
+    }
+
+    function verify(address _soul, string _id) external {
+        require(msg.sender == operator, "Only operator can update soul data");
+        require(
+            keccak256(bytes(souls[_soul].identity)) != zeroHash,
+            "Soul does not exist"
+        );
+        souls[_soul].identity = _id;
         souls[_soul].updated = block.timestamp;
         emit Update(_soul);
     }

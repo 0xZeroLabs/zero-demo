@@ -11,7 +11,7 @@ const props = defineProps({
     </div>
 
     <div v-if="formFeedback === 'negligible'" class="feedback text-white w-full block p-3 mt-4 bg-orange-500">
-        Already joined waitlist.
+        Email already exists.
     </div>
 
     <div v-else-if="formFeedback === 'success'" class="feedback text-white w-full block p-3 mt-4 bg-green-500">
