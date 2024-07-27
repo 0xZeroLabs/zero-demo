@@ -5,14 +5,19 @@
     "test": "hardhat test",
     "lint": "hardhat lint",
     "typechain": "hardhat typechain",
-    "sbt": "hardhat ignition deploy ./ignition/modules/SBT.ts --network viction0"
+    "omid": "hardhat ignition deploy ./ignition/modules/OMID.ts --network zksync"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "@types/chai": "4",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.11",
+    "chai": "4",
     "hardhat": "^2.22.3"
   },
   "dependencies": {
     "@hyperlane-xyz/core": "^3.11.1",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.31",
     "@openzeppelin/contracts": "^5.0.2",
     "dotenv": "^16.4.5",
     "env": "^0.0.2"

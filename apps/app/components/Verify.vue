@@ -1,0 +1,56 @@
+<script lang="ts" setup>
+import snsWebSdk from '@sumsub/websdk';
+
+const config = useRuntimeConfig()
+const address = useCookie("address");
+
+const launchWebSdk = async (accessToken) => {
+    let snsWebSdkInstance = snsWebSdk
+        .init(
+            accessToken,
+            async () => await getAccessToken()
+        )
+        .withConf({
+            lang: "en",
+            theme: "dark",
+        })
+        .withOptions({ addViewportTag: false, adaptIframeHeight: true })
+        // see below what kind of messages WebSDK generates
+        .on("idCheck.onStepCompleted", (payload) => {
+            console.log("onStepCompleted", payload);
+        })
+        .on("idCheck.onError", (error) => {
+            console.log("onError", error);
+        })
+        .build();
+
+    // you are ready to go:
+    // just launch the WebSDK by providing the container element for it
+    snsWebSdkInstance.launch("#sumsub-websdk-container");
+}
+
+const getAccessToken = async () => {
+    try {
+        const response = await fetch("api/sumsub", {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+
+        return data.response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(async () => {
+    await launchWebSdk(await getAccessToken() as unknown as string)
+})
+</script>
+
+<template>
+    <div class="w-full h-full" id="sumsub-websdk-container"></div>
+</template>

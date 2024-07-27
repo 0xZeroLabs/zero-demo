@@ -3,7 +3,6 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "./hypernode/OmniSend.sol";
 
 /**
  * An experiment in Soul Bound Tokens (SBT's) following Vitalik's
@@ -13,7 +12,6 @@ import "./hypernode/OmniSend.sol";
  * Edited to include created and updated timestamps
  * Based around ERC721 standards
  */
-
 
 // burning and updating across chain has to be implemented with the help of a registry for wallets
 contract omID is ERC721, ERC721URIStorage {
@@ -27,8 +25,8 @@ contract omID is ERC721, ERC721URIStorage {
     }
 
     struct State {
-        address id,
-        address soul
+        address id;
+        address soul;
     }
 
     struct Soul {
@@ -47,7 +45,7 @@ contract omID is ERC721, ERC721URIStorage {
 
     address public operator;
     bytes32 private zeroHash =
-        0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+        0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563;
     bytes4 private constant ERC4906_INTERFACE_ID = bytes4(0x49064906);
 
     event Mint(address _soul);
@@ -56,7 +54,7 @@ contract omID is ERC721, ERC721URIStorage {
     event SetProfile(address _profiler, address _soul);
     event RemoveProfile(address _profiler, address _soul);
 
-    constructor() ERC721("OmniPassport", "omPASS") {
+    constructor() ERC721("OmniIdentity", "omID") {
         operator = msg.sender;
     }
 
@@ -73,11 +71,10 @@ contract omID is ERC721, ERC721URIStorage {
 
     function mint(address _soul) external {
         require(
-            keccak256(bytes(souls[_soul].identity)) == zeroHash,
+            keccak256(abi.encode(souls[_soul].created)) == zeroHash,
             "Soul already exists"
         );
         require(msg.sender == operator, "Only operator can mint new souls");
-        souls[_soul] = _soulData;
         souls[_soul].status = VerificationStatus.Pending;
         souls[_soul].created = block.timestamp;
         _tokenIdCounter += 1;
@@ -90,25 +87,16 @@ contract omID is ERC721, ERC721URIStorage {
             msg.sender == _soul || msg.sender == operator,
             "Only users and issuers have rights to delete their data"
         );
+        require(
+            keccak256(abi.encode(souls[_soul].created)) != zeroHash,
+            "Soul does not exist"
+        );
         delete souls[_soul];
         for (uint256 i = 0; i < profiles[_soul].length; i++) {
             address profiler = profiles[_soul][i];
             delete soulProfiles[profiler][_soul];
         }
-        _burn(1);
-        super._burn(1);
         emit Burn(_soul);
-    }
-
-    function delegate(address _outbox, int _destination, string _recipient, Action _action, address _id, address _soul) external {
-        require(
-            msg.sender == operator,
-            "Only operators have rights to mint users omPas"
-        );
-        State _state;
-        _state.id = _id;
-        _state.soul = _soul;
-        OmniSend.send(_outbox, _destination, _recipient, 0, _state)
     }
 
     function supportsInterface(
@@ -129,7 +117,7 @@ contract omID is ERC721, ERC721URIStorage {
     function update(address _soul, Soul memory _soulData) external {
         require(msg.sender == operator, "Only operator can update soul data");
         require(
-            keccak256(bytes(souls[_soul].identity)) != zeroHash,
+            keccak256(abi.encode(souls[_soul].created)) != zeroHash,
             "Soul does not exist"
         );
         souls[_soul] = _soulData;
@@ -137,19 +125,25 @@ contract omID is ERC721, ERC721URIStorage {
         emit Update(_soul);
     }
 
-    function verify(address _soul, string _id) external {
+    function verify(address _soul, string memory _id) external {
         require(msg.sender == operator, "Only operator can update soul data");
         require(
-            keccak256(bytes(souls[_soul].identity)) != zeroHash,
+            keccak256(abi.encode(souls[_soul].created)) != zeroHash,
             "Soul does not exist"
         );
+        require(
+            keccak256(abi.encodePacked(souls[_soul].identity)) !=
+                keccak256(abi.encodePacked(_id)),
+            "Identity already exists"
+        );
         souls[_soul].identity = _id;
+        souls[_soul].status = VerificationStatus.Verified;
         souls[_soul].updated = block.timestamp;
         emit Update(_soul);
     }
 
     function hasSoul(address _soul) external view returns (bool) {
-        if (keccak256(bytes(souls[_soul].identity)) == zeroHash) {
+        if (keccak256(abi.encode(souls[_soul].created)) == zeroHash) {
             return false;
         } else {
             return true;
@@ -167,7 +161,7 @@ contract omID is ERC721, ERC721URIStorage {
      */
     function setProfile(address _soul, Soul memory _soulData) external {
         require(
-            keccak256(bytes(souls[_soul].identity)) != zeroHash,
+            keccak256(abi.encode(souls[_soul].created)) != zeroHash,
             "Cannot create a profile for a soul that has not been minted"
         );
         soulProfiles[msg.sender][_soul] = _soulData;
@@ -193,7 +187,7 @@ contract omID is ERC721, ERC721URIStorage {
         address _soul
     ) public view returns (bool) {
         if (
-            keccak256(bytes(soulProfiles[_profiler][_soul].identity)) ==
+            keccak256(abi.encode(soulProfiles[_profiler][_soul].created)) ==
             zeroHash
         ) {
             return false;
@@ -203,6 +197,10 @@ contract omID is ERC721, ERC721URIStorage {
     }
 
     function removeProfile(address _profiler, address _soul) external {
+        require(
+            keccak256(abi.encode(souls[_soul].created)) != zeroHash,
+            "Cannot remove a profile for a soul that has not been minted"
+        );
         require(
             msg.sender == _soul,
             "Only users have rights to delete their profile data"

@@ -30,7 +30,7 @@ contract omPassport is ERC721, ERC721URIStorage {
 
     address public operator;
     bytes32 private zeroHash =
-        0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+        0x5380c7b7ae81a58eb98d9c78de4a1fd7fd9535fc953ed2be602daaa41767312a;
     bytes4 private constant ERC4906_INTERFACE_ID = bytes4(0x49064906);
 
     event Mint(address _soul);
@@ -54,7 +54,7 @@ contract omPassport is ERC721, ERC721URIStorage {
 
     function mint(address _soul, address _id) external {
         require(
-            keccak256(bytes(souls[_soul].identity)) == zeroHash,
+            keccak256(abi.encodePacked(souls[_soul].identity)) == zeroHash,
             "Soul already exists"
         );
         require(msg.sender == operator, "Only operator can mint new souls");
@@ -98,7 +98,7 @@ contract omPassport is ERC721, ERC721URIStorage {
     function update(address _soul, address _id) external {
         require(msg.sender == operator, "Only operator can update soul data");
         require(
-            keccak256(bytes(souls[_soul].identity)) != zeroHash,
+            keccak256(abi.encodePacked(souls[_soul].identity)) != zeroHash,
             "Soul does not exist"
         );
         souls[_soul].identity = _id;
@@ -107,7 +107,7 @@ contract omPassport is ERC721, ERC721URIStorage {
     }
 
     function hasSoul(address _soul) external view returns (bool) {
-        if (keccak256(bytes(souls[_soul].identity)) == zeroHash) {
+        if (keccak256(abi.encodePacked(souls[_soul].identity)) == zeroHash) {
             return false;
         } else {
             return true;

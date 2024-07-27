@@ -1,52 +1,38 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.4.22 <0.9.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@hyperlane-xyz/core/contracts/interfaces/IMailbox.sol";
 
-contract OmniSend is Ownable {
+contract OmniSend {
     address private operator;
     bytes32 public recipient;
 
-    struct State {
-        address id,
-        address soul
+    constructor() {
+        operator = msg.sender;
     }
 
-    enum Action {
-        Mint,
-        Burn,
-        Update
-    }
-
-    struct GeneratePass {
-        Action action;
-        State state;
-    }
-
-    IMailbox mailbox;
-    event SentMessage(
-        uint32 destinationDomain,
-        bytes32 recipient,
-        bytes message
-    );
-
-    constructor(address _operator,) Ownable(_operator) {
-        operator = _operator;
-    }
-
-    function send(address _outbox, int _destination, string _recipient, Action _action, State memory _state) returns () {
+    function burn(address _outbox, uint32 _destination, bytes32 _recipient, address _addr) external payable {
         require(
             msg.sender == operator,
             "Only operators can send messages"
         );
-        mailbox = IMailbox(_outbox);
-        GeneratePass pass;
-        pass.action = _action;
-        pass.state = _state;
+        IMailbox mailbox = IMailbox(_outbox);
         bytes32 messageId = mailbox.dispatch{value: msg.value}(
             _destination,
-            recipient,
-            bytes(pass)
+            _recipient,
+            abi.encodePacked(_addr)
+        );
+    }
+    
+    function update(address _outbox, uint32 _destination, bytes32 _recipient, address _addr) external payable {
+        require(
+            msg.sender == operator,
+            "Only operators can send messages"
+        );
+        IMailbox mailbox = IMailbox(_outbox);
+        bytes32 messageId = mailbox.dispatch{value: msg.value}(
+            _destination,
+            _recipient,
+            abi.encodePacked(_addr)
         );
     }
 }
