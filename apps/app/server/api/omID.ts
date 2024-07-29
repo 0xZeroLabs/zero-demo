@@ -1,4 +1,4 @@
-[
+export const abi = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -514,6 +514,25 @@
 			}
 		],
 		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_soul",
+				"type": "address"
+			}
+		],
+		"name": "isVerified",
 		"outputs": [
 			{
 				"internalType": "bool",

@@ -46,6 +46,9 @@ contract omID is ERC721, ERC721URIStorage {
     address public operator;
     bytes32 private zeroHash =
         0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563;
+    bytes32 private zeroHash2 =
+        0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+
     bytes4 private constant ERC4906_INTERFACE_ID = bytes4(0x49064906);
 
     event Mint(address _soul);
@@ -99,17 +102,24 @@ contract omID is ERC721, ERC721URIStorage {
         emit Burn(_soul);
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC721, ERC721URIStorage) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
         return
             interfaceId == ERC4906_INTERFACE_ID ||
             super.supportsInterface(interfaceId);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
         tokenId = 1;
         return super.tokenURI(tokenId);
     }
@@ -150,6 +160,14 @@ contract omID is ERC721, ERC721URIStorage {
         }
     }
 
+    function isVerified(address _soul) external view returns (bool) {
+        if (keccak256(bytes(souls[_soul].identity)) == zeroHash2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     function getSoul(address _soul) external view returns (Soul memory) {
         return souls[_soul];
     }
@@ -169,23 +187,27 @@ contract omID is ERC721, ERC721URIStorage {
         emit SetProfile(msg.sender, _soul);
     }
 
-    function getProfile(
-        address _profiler,
-        address _soul
-    ) external view returns (Soul memory) {
+    function getProfile(address _profiler, address _soul)
+        external
+        view
+        returns (Soul memory)
+    {
         return soulProfiles[_profiler][_soul];
     }
 
-    function listProfiles(
-        address _soul
-    ) external view returns (address[] memory) {
+    function listProfiles(address _soul)
+        external
+        view
+        returns (address[] memory)
+    {
         return profiles[_soul];
     }
 
-    function hasProfile(
-        address _profiler,
-        address _soul
-    ) public view returns (bool) {
+    function hasProfile(address _profiler, address _soul)
+        public
+        view
+        returns (bool)
+    {
         if (
             keccak256(abi.encode(soulProfiles[_profiler][_soul].created)) ==
             zeroHash

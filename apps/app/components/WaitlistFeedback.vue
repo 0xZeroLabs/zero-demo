@@ -15,7 +15,7 @@ const props = defineProps({
     </div>
 
     <div v-else-if="formFeedback === 'success'" class="feedback text-white w-full block p-3 mt-4 bg-green-500">
-        Registered Successfully!
+        Registered Successfully! Don't Reload!!
     </div>
 
     <div v-else-if="formFeedback === 'incomplete'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">
