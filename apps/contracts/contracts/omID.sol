@@ -44,12 +44,11 @@ contract omID is ERC721, ERC721URIStorage {
     mapping(address => address[]) private profiles;
 
     address public operator;
+    string private ipfsCID;
     bytes32 private zeroHash =
         0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563;
     bytes32 private zeroHash2 =
         0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-
-    bytes4 private constant ERC4906_INTERFACE_ID = bytes4(0x49064906);
 
     event Mint(address _soul);
     event Burn(address _soul);
@@ -57,8 +56,9 @@ contract omID is ERC721, ERC721URIStorage {
     event SetProfile(address _profiler, address _soul);
     event RemoveProfile(address _profiler, address _soul);
 
-    constructor() ERC721("OmniIdentity", "omID") {
+    constructor(string memory _ipfsCID) ERC721("Omni-Identity", "omID") {
         operator = msg.sender;
+        ipfsCID = _ipfsCID;
     }
 
     function _update(
@@ -81,6 +81,7 @@ contract omID is ERC721, ERC721URIStorage {
         souls[_soul].status = VerificationStatus.Pending;
         souls[_soul].created = block.timestamp;
         _tokenIdCounter += 1;
+        _setTokenURI(_tokenIdCounter, string(abi.encodePacked("ipfs://", ipfsCID)));
         _mint(_soul, _tokenIdCounter);
         emit Mint(_soul);
     }
@@ -110,7 +111,7 @@ contract omID is ERC721, ERC721URIStorage {
         returns (bool)
     {
         return
-            interfaceId == ERC4906_INTERFACE_ID ||
+            interfaceId == bytes4(0x49064906) ||
             super.supportsInterface(interfaceId);
     }
 

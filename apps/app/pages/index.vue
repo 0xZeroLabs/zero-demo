@@ -15,7 +15,8 @@ const showDashboard = ref("visisble");
 const sessionToken = useCookie("auth");
 const address = useCookie("address");
 
-const mint = ref(true);
+const mint = ref(false);
+const verified = ref(false);
 
 async function createWalletClient() {
   return await createPassportClient(
@@ -52,8 +53,23 @@ onMounted(async () => {
 
     const res: Ref<SendData> = ref(response) as Ref<SendData>;
     mint.value = !res.value.response.pass;
+    reloadNuxtApp();
+  }, 300);
+  setTimeout(async () => {
+    const { data: response } = await useFetch("api/isVerified", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        address: address,
+      }
+    });
+
+    const res: Ref<SendData> = ref(response) as Ref<SendData>;
+    verified.value = !res.value.response.pass;
     isPageLoading.value = false;
-  }, 4000);
+  }, 300);
 });
 </script>
 
@@ -71,7 +87,7 @@ onMounted(async () => {
     <div v-else class="w-full">
       <div class="w-full flex justify-center items-center flex-col">
         <Mint v-if="mint" />
-        <CustomVerify />
+        <CustomVerify v-else-if="verified" />
         <!--
         <Verify class="hidden" />
         <PoP />

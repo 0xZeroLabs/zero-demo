@@ -10,17 +10,20 @@
                     class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="register" @keyup.enter="" :class="registerState">
-                    <span>{{ value }}</span>
-                </button>
-                <button type="submit"
-                    class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="authenticate" @keyup.enter="" :class="signinState">
-                    <span>{{ value2 }}</span>
+                    @click.prevent="register" @keyup.enter="" v-if="registerState">
+                    <span v-if="isLoading" class="load">Authenticating..</span>
+                    <span v-else>Authenticate</span>
                 </button>
 
-                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select">{{ spanVal
-                    }}</span>
+                <button type="submit"
+                    class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
+                    @click.prevent="authenticate" @keyup.enter="" v-else>
+                    <span v-if="authenticating" class="load">Signig In..</span>
+                    <span v-else>Sign In</span>
+                </button>
+
+                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select" v-if="registerState">Already have an Account?</span>
+                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select" v-else>Create an Account?</span>
                 <WaitlistFeedback :formFeedback="(formFeedback as string)" :isLoading="isLoading" />
             </form>
         </div>
@@ -29,8 +32,6 @@
 
 <script setup lang="ts">
 import { usePassport } from "./Passport";
-let value = ref("Authenticate");
-let value2 = ref("Sign In");
 
 type FormFeedbackType =
     | "incomplete"
@@ -56,7 +57,6 @@ const formFeedback: Ref<FormFeedbackType> = ref(null);
 
 async function authenticate() {
     isLoading.value = true;
-    value2.value = "Loading..."
     authenticating.value = true;
 
     email.value = email.value.trim();
@@ -65,19 +65,16 @@ async function authenticate() {
     if (!email.value.trim()) {
         formFeedback.value = "incomplete";
         isLoading.value = false;
-        value2.value = "Sign In"
         return;
     } else if (email.value && !regex.test(email.value)) {
         formFeedback.value = "invalid";
         success.value = false;
         isLoading.value = false;
-        value2.value = "Sign In"
         return;
     } else if (!consent.value) {
         formFeedback.value = "consent";
         success.value = false;
         isLoading.value = false;
-        value2.value = "Sign In"
         return;
     } else {
         setTimeout(async () => {
@@ -101,14 +98,12 @@ async function authenticate() {
                 } finally {
                     authenticating.value = false;
                     isLoading.value = false;
-                    value2.value = "Sign In";
                     reloadNuxtApp()
                 }
             }
             catch (error) {
                 success.value = false;
                 isLoading.value = false;
-                value.value = "Authenticate"
                 formFeedback.value = "error";
             }
         }, 4000);
@@ -118,8 +113,7 @@ async function authenticate() {
 
 const register = async () => {
     isLoading.value = true;
-    value.value = "Loading..."
-    formFeedback.value = "";
+    formFeedback.value = null;
 
     email.value = email.value.trim();
 
@@ -127,19 +121,16 @@ const register = async () => {
     if (!email.value.trim()) {
         formFeedback.value = "incomplete";
         isLoading.value = false;
-        value.value = "Authenticate"
         return;
     } else if (email.value && !regex.test(email.value)) {
         formFeedback.value = "invalid";
         success.value = false;
         isLoading.value = false;
-        value.value = "Authenticate"
         return;
     } else if (!consent.value) {
         formFeedback.value = "consent";
         success.value = false;
         isLoading.value = false;
-        value.value = "Authenticate"
         return;
     } else {
         setTimeout(async () => {
@@ -170,12 +161,10 @@ const register = async () => {
                     authenticating.value = false;
 
                     isLoading.value = false;
-                    value.value = "Authenticate"
                 }
             } catch (error) {
                 success.value = false;
                 isLoading.value = false;
-                value.value = "Authenticate"
                 formFeedback.value = "error";
             }
         }, 4000);
@@ -183,18 +172,12 @@ const register = async () => {
 }
 
 
-let registerState = ref("visible")
-let signinState = ref("hidden")
-let spanVal = ref("Already have an Account?")
+let registerState = ref(true)
 const toggleButtonState = () => {
-    if (signinState.value == "hidden") {
-        signinState.value = "visible"
-        registerState.value = "hidden"
-        spanVal.value = "Create an Account?"
+    if (registerState.value) {
+        registerState.value = false;
     } else {
-        signinState.value = "hidden"
-        registerState.value = "visible"
-        spanVal.value = "Already have an Account?"
+        registerState.value = true;
     }
 }
 </script>

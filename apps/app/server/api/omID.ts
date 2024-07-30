@@ -1,6 +1,12 @@
 export const abi = [
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_ipfsCID",
+				"type": "string"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -364,57 +370,6 @@ export const abi = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_profiler",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_soul",
-				"type": "address"
-			}
-		],
-		"name": "getProfile",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "identity",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "score",
-						"type": "uint256"
-					},
-					{
-						"internalType": "enum omID.VerificationStatus",
-						"name": "status",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint256",
-						"name": "created",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "updated",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct omID.Soul",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "_soul",
 				"type": "address"
 			}
@@ -452,30 +407,6 @@ export const abi = [
 				"internalType": "struct omID.Soul",
 				"name": "",
 				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_profiler",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_soul",
-				"type": "address"
-			}
-		],
-		"name": "hasProfile",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -551,25 +482,6 @@ export const abi = [
 				"type": "address"
 			}
 		],
-		"name": "listProfiles",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_soul",
-				"type": "address"
-			}
-		],
 		"name": "mint",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -618,24 +530,6 @@ export const abi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_profiler",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_soul",
-				"type": "address"
-			}
-		],
-		"name": "removeProfile",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -703,51 +597,6 @@ export const abi = [
 			}
 		],
 		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_soul",
-				"type": "address"
-			},
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "identity",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "score",
-						"type": "uint256"
-					},
-					{
-						"internalType": "enum omID.VerificationStatus",
-						"name": "status",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint256",
-						"name": "created",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "updated",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct omID.Soul",
-				"name": "_soulData",
-				"type": "tuple"
-			}
-		],
-		"name": "setProfile",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

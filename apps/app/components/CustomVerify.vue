@@ -30,6 +30,7 @@
 
 <script lang="ts" setup>
 import { generateTree } from "./Merkle";
+import { createPasskey } from "./AES";
 
 type piiType = {
     firstname: string;
@@ -43,6 +44,7 @@ const fisrtname = ref("");
 const lastname = ref("");
 const dob = ref("");
 const country = ref("");
+const address = useCookie("address");
 
 let piiArray: any[] = [];
 let pii: piiType;
@@ -76,6 +78,8 @@ const submit = () => {
     zkHash.then((tree) => {
         console.log(tree.getHexRoot());
     });
+
+    createPasskey(address.value as string)
 }
 
 function getValuesFromObject(jsonObject: { [key: string]: any }): any[] {

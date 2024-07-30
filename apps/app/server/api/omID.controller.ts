@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { abi } from "./omID";
 
 const config = useRuntimeConfig();
-const tokenContract = "0xf9959BE3cfBBA54D7CBbeFE2f9389EC5e493a95C";
+const tokenContract = "0x46566A05D468109793CD18afB8D8f67FdEB0a97F";
 
 export const mint = async (toAddress: string) => {
   const network = config.public.rpc;

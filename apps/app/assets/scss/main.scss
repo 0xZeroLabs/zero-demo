@@ -24,6 +24,11 @@
     transform: translateX(-100%);
   }
 }
+@keyframes l22 {
+  100% {
+    background-position: left;
+  }
+}
 @keyframes fadeIn {
   from {
     opacity: 0.4;
@@ -144,7 +149,8 @@
     text-align: center;
   }
   .btn,
-  input, select {
+  input,
+  select {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -153,6 +159,34 @@
       @apply text-white font-SpaceGrotesk font-bold text-lg z-10 relative;
     }
   }
+  .btn {
+    .load {
+      width: fit-content;
+      background: linear-gradient(
+          135deg,
+          #1c1c1c calc(50% - 0.5em),
+          #fff 0 calc(50% + 0.5em),
+          #1c1c1c 0
+        )
+        right/300% 100%;
+      animation: l22 2s infinite;
+    }
+
+    .load::before {
+      color: #fff;
+      padding: 0 5px;
+      background: inherit;
+      background-image: linear-gradient(
+        135deg,
+        #fff calc(50% - 0.5em),
+        #1c1c1c 0 calc(50% + 0.5em),
+        #fff 0
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+  }
+
   .btn::before {
     content: "";
     @apply bg-[#1c1c1c]/80 absolute top-[8px] left-[-2px] w-[calc(100%+4px)] h-[calc(100%-16px)];

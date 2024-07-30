@@ -2,7 +2,7 @@
     <div class="w-[160px]">
         <button type="submit" class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
             @click.prevent="mint()" :disabled="isLoading">
-            <span v-if="isLoading">Minting..</span>
+            <span v-if="isLoading" class="load">Minting..</span>
             <span v-else>Mint Identity</span>
         </button>
     </div>
@@ -51,6 +51,7 @@ const mint = async () => {
             isLoading.value = false;
             url.value = res.value.response.url;
             console.log(url.value)
+            reloadNuxtApp();
         } catch (error) {
             formFeedback.value = "error";
             isLoading.value = false;
