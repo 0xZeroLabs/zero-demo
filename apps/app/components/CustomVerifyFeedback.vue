@@ -10,15 +10,15 @@ const props = defineProps({
     </div>
 
     <div v-if="formFeedback === 'negligible'" class="feedback text-white w-full block p-3 mt-4 bg-orange-500">
-        Email already exists.
+        Custom mistake.
     </div>
 
     <div v-else-if="formFeedback === 'success'" class="feedback text-white w-full block p-3 mt-4 bg-green-500">
-        Registered Successfully! Don't Reload!!
+        Verification Successfully!
     </div>
 
     <div v-else-if="formFeedback === 'incomplete'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">
-        Please complete the required field.
+        Please complete the required fields.
     </div>
 
     <div v-else-if="formFeedback === 'invalid'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">

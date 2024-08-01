@@ -23,10 +23,11 @@
                     @click.prevent="submit" @keyup.enter="">
                     <span>Submit</span>
                 </button>
+                <CustomVerifyFeedback :form-feedback="formFeedback" />
             </form>
         </div>
     </div>
-    <div class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
+    <div v-if="false" class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
         style="margin: 0 auto;">
         <div class="w-full justify-center text-center">
             <h2 class="font-bold text-2xl">
@@ -35,7 +36,7 @@
             <form method="post" class="w-full rounded-2xl">
                 <input v-model="password" type="password" name="password" placeholder="Password"
                     class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
-                <span class="text-left block mt-2">This can't be changed. Keep it safe!</span>
+                <span class="text-left block mt-2">This encrypts your data. Keep it safe!</span>
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
                     @click.prevent="" @keyup.enter="">
@@ -64,7 +65,10 @@ const lastname = ref("");
 const dob = ref("");
 const country = ref("");
 const password = ref("");
+const formFeedback = ref("");
 const address = useCookie("address");
+const privKey = generatePrivKey()
+const publicKey = generatePubKey(privKey);
 
 let piiArray: any[] = [];
 let pii: piiType;
@@ -85,6 +89,10 @@ const generateRandomString = (length = 42): string => {
 const faceSig = generateRandomString().toLowerCase();
 
 const submit = () => {
+    if (!(fisrtname.value.trim() && lastname.value.trim() && dob.value.trim() && country.value.trim())) {
+        formFeedback.value = "incomplete";
+        return;
+    }
     pii = {
         firstname: fisrtname.value,
         lastname: lastname.value,
@@ -97,8 +105,6 @@ const submit = () => {
     console.log(piiArray)
     zkHash = generateTree(piiArray);
 
-    const privKey = generatePrivKey()
-    const publicKey = generatePubKey(privKey);
 
     zkHash.then((tree) => {
         encrypt(publicKey, JSON.stringify(pii)).then((encryptedPii) => {
@@ -118,7 +124,7 @@ const submit = () => {
                 "expirationDate": null,
                 "credentialSubject": {
                     "id": "did:zero:" + tree.getHexRoot(),
-                    "zkyc": {
+                    "cred": {
                         "type": "zkyc",
                         "status": "verified",
                         "data": encryptedPii,
@@ -127,6 +133,7 @@ const submit = () => {
                     }
                 }
             }
+            console.log(zkSchema)
         });
     })
 }
