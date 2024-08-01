@@ -26,11 +26,30 @@
             </form>
         </div>
     </div>
+    <div class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
+        style="margin: 0 auto;">
+        <div class="w-full justify-center text-center">
+            <h2 class="font-bold text-2xl">
+                Secure Your Vault.
+            </h2>
+            <form method="post" class="w-full rounded-2xl">
+                <input v-model="password" type="password" name="password" placeholder="Password"
+                    class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
+                <span class="text-left block mt-2">This can't be changed. Keep it safe!</span>
+                <button type="submit"
+                    class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
+                    @click.prevent="" @keyup.enter="">
+                    <span>Submit</span>
+                </button>
+            </form>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
 import { generateTree } from "./Merkle";
-import { createPasskey } from "./AES";
+import { createPasskey, authPasskey } from "./AES";
+import { encrypt, decrypt, generatePrivKey, generatePubKey } from "./ECC";
 
 type piiType = {
     firstname: string;
@@ -44,6 +63,7 @@ const fisrtname = ref("");
 const lastname = ref("");
 const dob = ref("");
 const country = ref("");
+const password = ref("");
 const address = useCookie("address");
 
 let piiArray: any[] = [];
@@ -73,13 +93,42 @@ const submit = () => {
         sig: faceSig
     }
     piiArray = getValuesFromObject(pii);
+    console.log(pii)
     console.log(piiArray)
     zkHash = generateTree(piiArray);
-    zkHash.then((tree) => {
-        console.log(tree.getHexRoot());
-    });
 
-    createPasskey(address.value as string)
+    const privKey = generatePrivKey()
+    const publicKey = generatePubKey(privKey);
+
+    zkHash.then((tree) => {
+        encrypt(publicKey, JSON.stringify(pii)).then((encryptedPii) => {
+            console.log(encryptedPii)
+            decrypt(privKey, encryptedPii).then(r => console.log(JSON.parse(r)))
+            console.log(tree.getHexRoot());
+            // this is just a sample of what zkSchema would be like
+            const zkSchema = {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://0xzero.org/contexts/zkSchema/v1"
+                ],
+                "id": "urn:uuid:" + address.value,
+                "type": ["VerifiableCredential", "ZERO-Credential"],
+                "issuer": "did:zero:0x123456789abcdef",
+                "issuanceDate": Date.toString(),
+                "expirationDate": null,
+                "credentialSubject": {
+                    "id": "did:zero:" + tree.getHexRoot(),
+                    "zkyc": {
+                        "type": "zkyc",
+                        "status": "verified",
+                        "data": encryptedPii,
+                        "algorithm": "aes",
+                        "verificationDate": Date.toString()
+                    }
+                }
+            }
+        });
+    })
 }
 
 function getValuesFromObject(jsonObject: { [key: string]: any }): any[] {

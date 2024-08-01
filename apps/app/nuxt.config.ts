@@ -24,4 +24,25 @@ export default defineNuxtConfig({
       privateKey: process.env.PRIVATE_KEY,
     },
   },
+  $development: {
+    vite: {
+      define: {
+        global: "globalThis",
+      },
+    },
+  },
+  vite: {
+    resolve: {
+      alias: {
+        crypto: "crypto-browserify",
+        stream: "stream-browserify",
+        assert: "assert",
+        http: "stream-http",
+        https: "https-browserify",
+        os: "os-browserify",
+        path: "path-browserify",
+        process: "process/browser",
+      },
+    },
+  },
 });
