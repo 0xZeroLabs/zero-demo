@@ -82,6 +82,7 @@ export const isVerified = async (toAddress: string) => {
   try {
     const _isVerified = (await contract.isVerified(toAddress));
     console.log(_isVerified)
+    console.log("data:", (await contract.getSoul(toAddress))[0])
 
     let hashData = {
       pass: _isVerified,

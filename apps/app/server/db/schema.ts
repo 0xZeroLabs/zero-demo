@@ -6,13 +6,22 @@ import {
   varchar,
   serial,
   primaryKey,
+  json,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
-export const email = pgTable("email", {
-  id: serial("id").primaryKey(),
-  address: varchar("address", { length: 256 }).notNull().unique(),
+export const users = pgTable("users", {
+  address: varchar("address", { length: 256 }).notNull().unique().primaryKey(),
+  pubkey: text("pubkey").notNull(),
+  passwordEncr: text("password_encr"),
+  passkeyEncr: text("passkey_encr"),
   createdAt: date("created_at").default("NOW()"),
 });
 
-export const insertEmailSchema = createInsertSchema(email, {});
+export const credentials = pgTable("credentials", {
+  address: varchar("address", { length: 256 }).notNull().unique().primaryKey(),
+  data: json("data"),
+});
+
+export const insertUserSchema = createInsertSchema(users, {});
+export const insertCredSchema = createInsertSchema(credentials, {});

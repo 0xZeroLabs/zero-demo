@@ -28,6 +28,9 @@ const props = defineProps({
     <div v-else-if="formFeedback === 'consent'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">
         Please agree to terms and conditions.
     </div>
+    
+    <div v-else class="feedback">
+    </div>
 </template>
 
 <style>

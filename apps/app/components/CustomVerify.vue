@@ -93,6 +93,7 @@ const submit = () => {
         formFeedback.value = "incomplete";
         return;
     }
+    formFeedback.value = "";
     pii = {
         firstname: fisrtname.value,
         lastname: lastname.value,
