@@ -22,7 +22,7 @@ const props = defineProps({
     </div>
 
     <div v-else-if="formFeedback === 'invalid'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">
-        Please enter a valid email address.
+        Please enter valid names.
     </div>
 
     <div v-else-if="formFeedback === 'consent'" class="feedback text-white w-full block p-3 mt-4 bg-red-500">

@@ -7,7 +7,7 @@
             </h2>
             <form method="post" class="w-full rounded-2xl">
                 <div class="w-full flex justify-between">
-                    <input v-model="fisrtname" type="text" name="fisrtname" placeholder="First Name"
+                    <input v-model="firstname" type="text" name="firstname" placeholder="First Name"
                         class="w-[calc(60%-8px)] px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
                     <input v-model="lastname" type="text" name="lastname" placeholder="Last Name"
                         class="w-[40%] px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
@@ -27,22 +27,24 @@
             </form>
         </div>
     </div>
-    <div v-if="false" class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
-        style="margin: 0 auto;">
-        <div class="w-full justify-center text-center">
-            <h2 class="font-bold text-2xl">
-                Secure Your Vault.
-            </h2>
-            <form method="post" class="w-full rounded-2xl">
-                <input v-model="password" type="password" name="password" placeholder="Password"
-                    class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
-                <span class="text-left block mt-2">This encrypts your data. Keep it safe!</span>
-                <button type="submit"
-                    class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
-                    @click.prevent="" @keyup.enter="">
-                    <span>Submit</span>
-                </button>
-            </form>
+    <div v-if="encrypting" class="w-full h-full flex justify-center items-center absolute bg-[rgba(0,0,0,.4)] backdrop-blur-sm z-10">
+        <div class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
+            style="margin: 0 auto;">
+            <div class="w-full justify-center text-center">
+                <h2 class="font-bold text-2xl">
+                    Secure Your Vault.
+                </h2>
+                <form method="post" class="w-full rounded-2xl">
+                    <input v-model="password" type="password" name="password" placeholder="Password"
+                        class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
+                    <span class="text-left block mt-2">This encrypts your data. Keep it safe!</span>
+                    <button type="submit"
+                        class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
+                        @click.prevent="" @keyup.enter="">
+                        <span>Submit</span>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </template>
@@ -51,6 +53,7 @@
 import { generateTree } from "./Merkle";
 import { createPasskey, authPasskey } from "./AES";
 import { encrypt, decrypt, generatePrivKey, generatePubKey } from "./ECC";
+import { ethers } from "ethers";
 
 type piiType = {
     firstname: string;
@@ -60,18 +63,41 @@ type piiType = {
     sig: string;
 }
 
-const fisrtname = ref("");
+type Schema = {
+    "@context": string[];
+    id: string;
+    type: string[];
+    issuer: string;
+    issuanceDate: string;
+    expirationDate: null;
+    credentialSubject: {
+        id: string;
+        cred: {
+            type: string;
+            status: string;
+            data: string;
+            algorithm: string;
+            verificationDate: string;
+        };
+    };
+}
+
+const firstname = ref("");
 const lastname = ref("");
 const dob = ref("");
 const country = ref("");
 const password = ref("");
 const formFeedback = ref("");
+const encrypting = ref(false);
 const address = useCookie("address");
 const privKey = generatePrivKey()
 const publicKey = generatePubKey(privKey);
 
+const config = useRuntimeConfig()
+
 let piiArray: any[] = [];
 let pii: piiType;
+let zkSchema: Schema;
 
 let zkHash;
 
@@ -85,17 +111,25 @@ const generateRandomString = (length = 42): string => {
     return result;
 };
 
+const deriveEthAddressFromKey = (privateKey: string): string => {
+    const wallet = new ethers.Wallet(privateKey.toString().trim());
+    return wallet.address;
+}
+
 // generates random strings to represent a 3d face recognition signature based on anima. similar to: 2SatKPaipypttoH7eNyPRF7YbVVF1MQctUNRgMZc5S
 const faceSig = generateRandomString().toLowerCase();
 
 const submit = () => {
-    if (!(fisrtname.value.trim() && lastname.value.trim() && dob.value.trim() && country.value.trim())) {
+    if (!(firstname.value.trim() && lastname.value.trim() && dob.value.trim() && country.value.trim())) {
         formFeedback.value = "incomplete";
+        return;
+    } else if (!(firstname.value.length >= 2 && lastname.value.length >= 2)) {
+        formFeedback.value = "invalid";
         return;
     }
     formFeedback.value = "";
     pii = {
-        firstname: fisrtname.value,
+        firstname: firstname.value,
         lastname: lastname.value,
         dob: dob.value,
         country: country.value,
@@ -110,17 +144,19 @@ const submit = () => {
     zkHash.then((tree) => {
         encrypt(publicKey, JSON.stringify(pii)).then((encryptedPii) => {
             console.log(encryptedPii)
+            encrypting.value = true;
+
             decrypt(privKey, encryptedPii).then(r => console.log(JSON.parse(r)))
             console.log(tree.getHexRoot());
             // this is just a sample of what zkSchema would be like
-            const zkSchema = {
+            zkSchema = {
                 "@context": [
                     "https://www.w3.org/2018/credentials/v1",
                     "https://0xzero.org/contexts/zkSchema/v1"
                 ],
                 "id": "urn:uuid:" + address.value,
                 "type": ["VerifiableCredential", "ZERO-Credential"],
-                "issuer": "did:zero:0x123456789abcdef",
+                "issuer": "did:zero:" + deriveEthAddressFromKey(config.public.privateKey),
                 "issuanceDate": Date.toString(),
                 "expirationDate": null,
                 "credentialSubject": {
