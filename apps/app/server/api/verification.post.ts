@@ -1,4 +1,4 @@
-import { sendVerification } from "./verification.controller";
+import { sendVerification } from "./controllers/verification.controller";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

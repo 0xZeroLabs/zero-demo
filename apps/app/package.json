@@ -21,6 +21,7 @@
     "@simplewebauthn/server": "^10.0.1",
     "@std/encoding": "npm:@jsr/std__encoding@^1.0.1",
     "@sumsub/websdk": "^2.3.1",
+    "@types/crypto-js": "^4.2.2",
     "assert": "^2.1.0",
     "axios": "^1.7.2",
     "base64url": "^3.0.1",

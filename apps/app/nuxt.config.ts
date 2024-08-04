@@ -22,6 +22,7 @@ export default defineNuxtConfig({
       secretKey: process.env.SUMSUB_SECRET_KEY,
       rpc: process.env.RPC,
       privateKey: process.env.PRIVATE_KEY,
+      salt: process.env.SALT,
     },
   },
   $development: {

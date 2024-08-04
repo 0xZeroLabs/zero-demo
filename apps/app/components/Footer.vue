@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center">
         <div class="font-SpaceGrotesk flex flex-col items-center w-full md:max-w-[1536px] pt-12">
-            <img class="md:hidden" src="@/assets/logo1.svg" />
+            <img class="md:hidden z-10" src="@/assets/logo1.svg" />
             <ul
                 class="bg-[#000] min-h-[120px] md:min-h-12 z-10 flex flex-col md:flex-row py-5 md:pb-0 justify-between items-center md:items-start px-10 w-[40%] text-white">
                 <li><a href="/#" class="nav-link">Ecosystem</a></li>

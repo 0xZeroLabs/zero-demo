@@ -1,4 +1,4 @@
-import { isVerified } from "./omID.controller";
+import { isVerified } from "./controllers/omID.controller";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

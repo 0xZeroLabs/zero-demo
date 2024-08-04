@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { abi } from "./omID";
+import { abi } from "../utils/omID";
 
 const config = useRuntimeConfig();
 const tokenContract = "0x46566A05D468109793CD18afB8D8f67FdEB0a97F";
@@ -41,6 +41,46 @@ export const mint = async (toAddress: string) => {
   }
 };
 
+export const verify = async (toAddress: string, zkHash: string) => {
+  const network = config.public.rpc;
+  const provider = new ethers.JsonRpcProvider(network);
+
+  const contract = new ethers.Contract(tokenContract, abi, provider);
+  const signer = new ethers.Wallet(config.public.privateKey!, provider);
+
+  console.log(zkHash);
+  const data = contract.interface.encodeFunctionData("verify", [
+    toAddress,
+    zkHash,
+  ]);
+
+  // creating and sending the transaction object
+  try {
+    const tx = await signer.sendTransaction({
+      to: tokenContract,
+      from: signer.address,
+      value: ethers.parseUnits("0.000", "ether"),
+      data: data,
+    });
+
+    const receipt = await tx.wait();
+
+    let hashData = {
+      url: `https://sepolia.etherscan.io/tx/${tx.hash}`,
+      message: `Mined in block ${receipt!.blockNumber}`,
+    };
+
+    return hashData;
+  } catch (error) {
+    let hashData = {
+      url: "",
+      message: `Error: ${error}`,
+    };
+
+    return hashData;
+  }
+};
+
 export const hasSoul = async (toAddress: string) => {
   const network = config.public.rpc;
   const provider = new ethers.JsonRpcProvider(network);
@@ -51,8 +91,8 @@ export const hasSoul = async (toAddress: string) => {
 
   // creating and sending the transaction object
   try {
-    const _hasSoul = (await contract.hasSoul(toAddress));
-    console.log(_hasSoul)
+    const _hasSoul = await contract.hasSoul(toAddress);
+    console.log(_hasSoul);
 
     let hashData = {
       pass: _hasSoul,
@@ -80,9 +120,9 @@ export const isVerified = async (toAddress: string) => {
 
   // creating and sending the transaction object
   try {
-    const _isVerified = (await contract.isVerified(toAddress));
-    console.log(_isVerified)
-    console.log("data:", (await contract.getSoul(toAddress))[0])
+    const _isVerified = await contract.isVerified(toAddress);
+    console.log(_isVerified);
+    console.log("data:", (await contract.getSoul(toAddress))[0]);
 
     let hashData = {
       pass: _isVerified,
@@ -97,5 +137,21 @@ export const isVerified = async (toAddress: string) => {
     };
 
     return hashData;
+  }
+};
+
+export const getSoul = async (toAddress: string) => {
+  const network = config.public.rpc;
+  const provider = new ethers.JsonRpcProvider(network);
+
+  const contract = new ethers.Contract(tokenContract, abi, provider);
+
+  // creating and sending the transaction object
+  try {
+    let arr: any[] = [];
+    
+    return (await contract.getSoul(toAddress)).map((value: any) => value.toString());
+  } catch (error) {
+    return [];
   }
 };

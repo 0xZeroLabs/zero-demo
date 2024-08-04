@@ -1,8 +1,8 @@
-import { mint } from "./controllers/omID.controller";
+import { getUser } from "./controllers/db.controller";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const response = await mint(body.address);
+  const response = await getUser(body.address);
   return {
     response: response,
   };

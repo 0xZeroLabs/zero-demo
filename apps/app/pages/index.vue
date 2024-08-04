@@ -14,6 +14,7 @@ const isPageLoading = ref(true);
 const showDashboard = ref("visisble");
 const sessionToken = useCookie("auth");
 const address = useCookie("address");
+const zkyc = useCookie("zkyc");
 
 const mint = ref(false);
 const verified = ref(false);
@@ -53,7 +54,6 @@ onMounted(async () => {
 
     const res: Ref<SendData> = ref(response) as Ref<SendData>;
     mint.value = !res.value.response.pass;
-    reloadNuxtApp();
   }, 300);
   setTimeout(async () => {
     const { data: response } = await useFetch("api/isVerified", {
@@ -70,6 +70,36 @@ onMounted(async () => {
     verified.value = !res.value.response.pass;
     isPageLoading.value = false;
   }, 300);
+  setTimeout(async () => {
+    const { data: response } = await useFetch("api/getSoul", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        address: address,
+      }
+    });
+
+    const res: Ref<any> = ref(response) as Ref<any>;
+    zkyc.value = res.value.response[0]
+  }, 300);
+  if (zkyc.value) {
+    setTimeout(async () => {
+      const { data: response } = await useFetch("api/getCred", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
+          address: zkyc.value,
+        }
+      });
+
+      const res: Ref<any> = ref(response) as Ref<any>;
+      console.log(res.value.response)
+    }, 300);
+  }
 });
 </script>
 

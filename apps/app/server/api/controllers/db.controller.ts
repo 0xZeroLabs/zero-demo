@@ -1,10 +1,10 @@
-import { db } from "../db/setup";
+import { db } from "../../db/setup";
 import {
   insertUserSchema,
   users,
   insertCredSchema,
   credentials,
-} from "../db/schema";
+} from "../../db/schema";
 import { and, eq } from "drizzle-orm";
 
 /**
@@ -29,6 +29,7 @@ export const addUser = async (
     console.error("Invalid data format! Please check and retry.");
     return "error";
   }
+  console.log("here");
   try {
     await db.insert(users).values(validatedData).returning();
     return "success";

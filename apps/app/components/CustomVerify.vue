@@ -20,14 +20,16 @@
                 </div>
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="submit" @keyup.enter="">
+                    @click.prevent="submitForm" @keyup.enter="">
                     <span>Submit</span>
                 </button>
                 <CustomVerifyFeedback :form-feedback="formFeedback" />
             </form>
         </div>
     </div>
-    <div v-if="encrypting" class="w-full h-full flex justify-center items-center absolute bg-[rgba(0,0,0,.4)] backdrop-blur-sm z-10">
+    <div v-if="encrypting" class="w-full h-full flex justify-center items-center absolute">
+        <span class="bg-[rgba(0,0,0,.2)] backdrop-blur-sm z-10 w-full h-full absolute cursor-pointer"
+            @click.prevent="notLoading()"></span>
         <div class="bg-[#080808] border-[0.5px] rounded border-[#fff]/80 modal p-6 max-w-[32rem] md:w-[91.666667%] font-SpaceGrotesk"
             style="margin: 0 auto;">
             <div class="w-full justify-center text-center">
@@ -40,9 +42,10 @@
                     <span class="text-left block mt-2">This encrypts your data. Keep it safe!</span>
                     <button type="submit"
                         class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
-                        @click.prevent="" @keyup.enter="">
+                        @click.prevent="submitPassword" @keyup.enter="">
                         <span>Submit</span>
                     </button>
+                    <PasswordVerify :form-feedback="formFeedback2" />
                 </form>
             </div>
         </div>
@@ -54,6 +57,7 @@ import { generateTree } from "./Merkle";
 import { createPasskey, authPasskey } from "./AES";
 import { encrypt, decrypt, generatePrivKey, generatePubKey } from "./ECC";
 import { ethers } from "ethers";
+import { hashPassword } from "./ParsePassword.js"
 
 type piiType = {
     firstname: string;
@@ -88,6 +92,7 @@ const dob = ref("");
 const country = ref("");
 const password = ref("");
 const formFeedback = ref("");
+const formFeedback2 = ref("");
 const encrypting = ref(false);
 const address = useCookie("address");
 const privKey = generatePrivKey()
@@ -100,6 +105,10 @@ let pii: piiType;
 let zkSchema: Schema;
 
 let zkHash;
+
+const notLoading = () => {
+    encrypting.value = false;
+}
 
 const generateRandomString = (length = 42): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -119,7 +128,7 @@ const deriveEthAddressFromKey = (privateKey: string): string => {
 // generates random strings to represent a 3d face recognition signature based on anima. similar to: 2SatKPaipypttoH7eNyPRF7YbVVF1MQctUNRgMZc5S
 const faceSig = generateRandomString().toLowerCase();
 
-const submit = () => {
+const submitForm = () => {
     if (!(firstname.value.trim() && lastname.value.trim() && dob.value.trim() && country.value.trim())) {
         formFeedback.value = "incomplete";
         return;
@@ -128,6 +137,42 @@ const submit = () => {
         return;
     }
     formFeedback.value = "";
+    encrypting.value = true;
+}
+
+const getValuesFromObject = (jsonObject: { [key: string]: any }): any[] => {
+    const values: any[] = [];
+
+    for (const key in jsonObject) {
+        if (jsonObject.hasOwnProperty(key)) {
+            const value = jsonObject[key];
+
+            if (Array.isArray(value)) {
+                // if the value is an array, recursively extract its values
+                values.push(...getValuesFromObject(value));
+            } else if (typeof value === 'object' && value !== null) {
+                // if the value is an object, recursively extract its values
+                values.push(...getValuesFromObject(value));
+            } else {
+                // otherwise, push the value directly
+                values.push(whitespaceToHyphen(value));
+            }
+        }
+
+    }
+
+    return values;
+}
+
+const submitPassword = async () => {
+    formFeedback.value = "";
+    if (!password.value.trim()) {
+        formFeedback2.value = "incomplete";
+        return;
+    } else if (!(password.value.length >= 8) || !/^[A-Za-z0-9]*$/.test(password.value) || checkChar(password.value)) {
+        formFeedback2.value = "invalid";
+        return;
+    }
     pii = {
         firstname: firstname.value,
         lastname: lastname.value,
@@ -140,11 +185,9 @@ const submit = () => {
     console.log(piiArray)
     zkHash = generateTree(piiArray);
 
-
-    zkHash.then((tree) => {
-        encrypt(publicKey, JSON.stringify(pii)).then((encryptedPii) => {
-            console.log(encryptedPii)
-            encrypting.value = true;
+    zkHash.then(async (tree) => {
+        encrypt(publicKey, JSON.stringify(pii)).then(async (encryptedPii) => {
+            console.log("Encr: ", encryptedPii)
 
             decrypt(privKey, encryptedPii).then(r => console.log(JSON.parse(r)))
             console.log(tree.getHexRoot());
@@ -170,33 +213,86 @@ const submit = () => {
                     }
                 }
             }
-            console.log(zkSchema)
+
+            setTimeout(async () => {
+                try {
+                    console.log("pre");
+                    console.log("hash:", hashPassword(password.value))
+
+                    const { data: response } = await useFetch("api/addUser", {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: {
+                            address: address,
+                            pubkey: publicKey,
+                            passwordEncr: hashPassword(password.value)
+                        }
+                    })
+
+                    const res: Ref<any> = ref(response) as Ref<any>;
+
+                    if (res.value.response == "error") {
+                        formFeedback2.value = res.value.response;
+                        return;
+                    };
+
+                    const { data: response2 } = await useFetch("api/addCred", {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: {
+                            address: tree.getHexRoot(),
+                            data: zkSchema
+                        }
+                    })
+
+                    const res2: Ref<any> = ref(response) as Ref<any>;
+
+                    if (res2.value.response == "error") {
+                        formFeedback2.value = res2.value.response;
+                        return
+                    };
+
+                    const { data: response3 } = await useFetch("api/verify", {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: {
+                            address: address,
+                            zkHash: tree.getHexRoot()
+                        }
+                    })
+
+                    const res3: Ref<any> = ref(response) as Ref<any>;
+                    res3.value.response.url ? formFeedback2.value = "success" : formFeedback2.value = "error";
+                    if (formFeedback.value == "error") return;
+                    reloadNuxtApp()
+                } catch (error) {
+                    formFeedback2.value = "error"
+                }
+            }, 300);
         });
     })
 }
 
-function getValuesFromObject(jsonObject: { [key: string]: any }): any[] {
-    const values: any[] = [];
-
-    for (const key in jsonObject) {
-        if (jsonObject.hasOwnProperty(key)) {
-            const value = jsonObject[key];
-
-            if (Array.isArray(value)) {
-                // if the value is an array, recursively extract its values
-                values.push(...getValuesFromObject(value));
-            } else if (typeof value === 'object' && value !== null) {
-                // if the value is an object, recursively extract its values
-                values.push(...getValuesFromObject(value));
-            } else {
-                // otherwise, push the value directly
-                values.push(whitespaceToHyphen(value));
-            }
+const checkChar = (str: string): boolean => {
+    for (let i = 0; i < str.length; ++i) {
+        let ch = str.charCodeAt(i);
+        if (
+            !(ch >= 65 && ch <= 90) && // A-Z
+            !(ch >= 97 && ch <= 122) && // a-z
+            !(ch >= 48 && ch <= 57) // 0-9
+        ) {
+            return true;
+        } else {
+            return false;
         }
-
     }
-
-    return values;
+    return false;
 }
 
 const whitespaceToHyphen = (input: string): string => {
