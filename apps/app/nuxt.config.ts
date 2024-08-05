@@ -1,3 +1,4 @@
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ["@nuxtjs/tailwindcss", "@nuxtjs/color-mode"],
@@ -25,25 +26,24 @@ export default defineNuxtConfig({
       salt: process.env.SALT,
     },
   },
-  $development: {
-    vite: {
-      define: {
-        global: "globalThis",
-      },
-    },
-  },
   vite: {
-    resolve: {
-      alias: {
-        crypto: "crypto-browserify",
-        stream: "stream-browserify",
-        assert: "assert",
-        http: "stream-http",
-        https: "https-browserify",
-        os: "os-browserify",
-        path: "path-browserify",
-        process: "process/browser",
-      },
+    plugins: [
+      nodePolyfills({
+        include: [
+          "crypto",
+          "stream",
+          "assert",
+          "http",
+          "https",
+          "http",
+          "os",
+          "path",
+          "process",
+        ],
+      }),
+    ],
+    define: {
+      global: "globalThis",
     },
   },
 });
