@@ -27,6 +27,18 @@ export default defineNuxtConfig({
     },
   },
   vite: {
+    define: {
+      global: "globalThis",
+    },
+
+    resolve: {
+      alias: {
+        // required to polyfill node crypto module
+        crypto: "crypto-browserify",
+        stream: "stream-browserify",
+      },
+    },
+
     plugins: [
       {
         // work around for `exports is not defined` error within the crypto-browserify > randomfill dep
@@ -56,34 +68,19 @@ export default defineNuxtConfig({
           return { code: modifiedCode, map: null };
         },
       },
-      nodePolyfills({
-        include: [
-          "crypto",
-          "stream",
-          "assert",
-          "http",
-          "https",
-          "http",
-          "os",
-          "path",
-          "process",
-        ],
-      }),
     ],
-    define: {
-      global: "globalThis",
-    },
-  },
-   build: {
+
+    build: {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
             // isolate randomfill as a separate chunk
-            if (id.includes('node_modules/randomfill/browser.js')) {
-              return 'randomfill'
+            if (id.includes("node_modules/randomfill/browser.js")) {
+              return "randomfill";
             }
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
+  },
 });
