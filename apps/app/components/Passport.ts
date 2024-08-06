@@ -7,7 +7,7 @@ export function usePassport(scopeId: string) {
 
   if (!signerRef.value) {
     signerRef.value = new WebauthnSigner({
-      rpId: 'process.env.PUBLIC_RP_ID'!,
+      rpId: 'demo.0xzero.org'!,
       rpName: "0xZero",
     });
   }

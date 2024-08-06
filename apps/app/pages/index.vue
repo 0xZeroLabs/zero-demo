@@ -6,6 +6,8 @@ import { sepolia } from "viem/chains";
 import { keccak256, toUtf8Bytes, toUtf8String } from "ethers";
 
 const config = useRuntimeConfig();
+const globalLoc = global.location;
+console.log(globalLoc)
 const alchemyUrl = config.public.rpc;
 const fallbackProvider = http(alchemyUrl) as unknown as any;
 
