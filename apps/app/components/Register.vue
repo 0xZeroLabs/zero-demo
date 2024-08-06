@@ -54,6 +54,7 @@ const sessionToken = useCookie<{}>("auth")
 const address = useCookie<string>("address");
 const { passport } = usePassport(config.public.scope as string);
 
+console.log(config.public.scope)
 const formFeedback: Ref<FormFeedbackType> = ref(null);
 
 async function authenticate() {
