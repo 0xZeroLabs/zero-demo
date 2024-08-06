@@ -24,6 +24,7 @@ export default defineNuxtConfig({
       rpc: process.env.RPC,
       privateKey: process.env.PRIVATE_KEY,
       salt: process.env.SALT,
+      scope: process.env.SCOPE_ID,
     },
   },
   vite: {

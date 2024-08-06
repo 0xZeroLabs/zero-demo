@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { usePassport } from "./Passport";
 
+const config = useRuntimeConfig();
 type FormFeedbackType =
     | "incomplete"
     | "consent"
@@ -51,7 +52,7 @@ const authenticating = ref(false);
 const authenticated = ref(false);
 const sessionToken = useCookie<{}>("auth")
 const address = useCookie<string>("address");
-const { passport } = usePassport("49a15cec-22ac-4920-a6c2-e26def45c5fb");
+const { passport } = usePassport(config.public.scope as string);
 
 const formFeedback: Ref<FormFeedbackType> = ref(null);
 
