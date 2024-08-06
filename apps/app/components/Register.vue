@@ -143,7 +143,7 @@ const register = async () => {
                     userDisplayName: email.value,
                 })
                 try {
-                    await passport.setupEncryption();
+                    console.log((await passport.setupEncryption()));
                     const res = await passport.register(userInput.value);
                     console.log(res);
 
