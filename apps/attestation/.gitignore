@@ -1,13 +1,20 @@
-# NodeJS
-build
 node_modules
-coverage
+.env
 
-# Editor
-.vscode
+# Hardhat files
+/cache
+/artifacts
 
-# System
-.DS_Store
+# TypeChain files
+/typechain
+/typechain-types
 
-# Never commit keys to Git!
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+
 keys
+build
