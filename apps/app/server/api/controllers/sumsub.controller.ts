@@ -6,8 +6,8 @@ import FormData from "form-data";
 const _config = useRuntimeConfig();
 console.log(config);
 
-const SUMSUB_APP_TOKEN = _config.public.appToken as string;
-const SUMSUB_SECRET_KEY = _config.public.secretKey as string;
+const SUMSUB_APP_TOKEN = _config.appToken as string;
+const SUMSUB_SECRET_KEY = _config.secretKey as string;
 const SUMSUB_BASE_URL = "https://api.sumsub.com";
 
 var config: any = {};

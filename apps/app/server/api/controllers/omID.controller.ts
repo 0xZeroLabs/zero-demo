@@ -9,7 +9,7 @@ export const mint = async (toAddress: string) => {
   const provider = new ethers.JsonRpcProvider(network);
 
   const contract = new ethers.Contract(tokenContract, abi, provider);
-  const signer = new ethers.Wallet(config.public.privateKey!, provider);
+  const signer = new ethers.Wallet(config.privateKey!, provider);
 
   console.log(toAddress);
   const data = contract.interface.encodeFunctionData("mint", [toAddress]);
@@ -46,7 +46,7 @@ export const verify = async (toAddress: string, zkHash: string) => {
   const provider = new ethers.JsonRpcProvider(network);
 
   const contract = new ethers.Contract(tokenContract, abi, provider);
-  const signer = new ethers.Wallet(config.public.privateKey!, provider);
+  const signer = new ethers.Wallet(config.privateKey!, provider);
 
   console.log(zkHash);
   const data = contract.interface.encodeFunctionData("verify", [

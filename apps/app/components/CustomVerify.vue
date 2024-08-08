@@ -199,7 +199,7 @@ const submitPassword = async () => {
                 ],
                 "id": "urn:uuid:" + address.value,
                 "type": ["VerifiableCredential", "ZERO-Credential"],
-                "issuer": "did:zero:" + deriveEthAddressFromKey(config.public.privateKey),
+                "issuer": "did:zero:" + config.public.address,
                 "issuanceDate": Date.toString(),
                 "expirationDate": null,
                 "credentialSubject": {

@@ -120,6 +120,7 @@ onMounted(async () => {
       <div class="w-full flex justify-center items-center flex-col">
         <Mint v-if="mint" />
         <CustomVerify v-else-if="verified" />
+        <ProveData v-else />
         <!--
         <Verify class="hidden" />
         <PoP />
