@@ -1,7 +1,8 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "test": "mocha ./circuits/test/gtoeq.test.js"
+    "test": "mocha ./circuits/test/gtoeq.test.js",
+    "generate": "ts-node ./test/utils/generatingProofs.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
