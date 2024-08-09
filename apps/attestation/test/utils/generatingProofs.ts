@@ -51,13 +51,14 @@ export const generateProof = async (
       [argv[4], argv[5]],
     ];
     const c = [argv[6], argv[7]];
-    const Input = [];
+    const Output = [];
 
     for (let i = 8; i < argv.length; i++) {
-      Input.push(argv[i]);
+      Output.push(argv[i]);
     }
-
-    return { a, b, c, Input };
+    const Input = input1;
+    
+    return { a, b, c, Input, Output };
   } catch (err) {
     console.log(`Error:`, err);
     return {
