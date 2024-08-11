@@ -52,6 +52,7 @@ export const generateProof = async (
     ];
     const _pC = [argv[6], argv[7]];
     const _pubSignals = [];
+    console.log(argv)
 
     for (let i = 8; i < argv.length; i++) {
       _pubSignals.push(argv[i]);
