@@ -11,7 +11,7 @@ template GreaterThanOrEqual(n) {
     against <== in[1];
 
     // Concatenate ASCII codes for gte
-    var concatenated = 103 * 1000000 + 116 * 1000 + 101;
+    var concatenated = 103116101;
 
     type <== concatenated;
     component gte = GreaterEqThan(n);

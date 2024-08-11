@@ -10,14 +10,15 @@
                     class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="register" @keyup.enter="" v-if="registerState">
+                    @click.prevent="register" @keyup.enter="" v-if="registerState" :disabled="isLoading||authenticating">
                     <span v-if="isLoading" class="load">Authenticating..</span>
+                    <span v-else-if="authenticating" class="load">Signig In..</span>
                     <span v-else>Authenticate</span>
                 </button>
 
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="authenticate" @keyup.enter="" v-else>
+                    @click.prevent="authenticate" @keyup.enter="" v-else :disabled="authenticating">
                     <span v-if="authenticating" class="load">Signig In..</span>
                     <span v-else>Sign In</span>
                 </button>
@@ -54,7 +55,7 @@ const sessionToken = useCookie<{}>("auth")
 const address = useCookie<string>("address");
 const { passport } = usePassport(config.public.scope as string);
 
-console.log(config.public.scope)
+console.log(passport)
 const formFeedback: Ref<FormFeedbackType> = ref(null);
 
 async function authenticate() {
@@ -176,9 +177,9 @@ const register = async () => {
 
 let registerState = ref(true)
 const toggleButtonState = () => {
-    if (registerState.value) {
+    if (registerState.value && !isLoading.value) {
         registerState.value = false;
-    } else {
+    } else if(!registerState.value && !authenticating.value) {
         registerState.value = true;
     }
 }
