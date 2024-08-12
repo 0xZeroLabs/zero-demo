@@ -149,6 +149,9 @@ importers:
       resend:
         specifier: ^3.3.0
         version: 3.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      snarkjs:
+        specifier: ^0.7.4
+        version: 0.7.4
       stream-browserify:
         specifier: ^3.0.0
         version: 3.0.0
@@ -198,6 +201,9 @@ importers:
       '@types/pg':
         specifier: ^8.11.6
         version: 8.11.6
+      '@types/snarkjs':
+        specifier: ^0.7.8
+        version: 0.7.8
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
@@ -2795,6 +2801,9 @@ packages:
 
   '@types/sinonjs__fake-timers@8.1.5':
     resolution: {integrity: sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==}
+
+  '@types/snarkjs@0.7.8':
+    resolution: {integrity: sha512-x37Jsv1vx6I6RMJdfvYEmDUOLYgzYMecwlk13gniDOcN20xLVe9hy9DlQxWeCPirqpDY/jwugQSqCi2RxehU3g==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -12430,6 +12439,8 @@ snapshots:
       '@types/sinonjs__fake-timers': 8.1.5
 
   '@types/sinonjs__fake-timers@8.1.5': {}
+
+  '@types/snarkjs@0.7.8': {}
 
   '@types/stack-utils@2.0.3':
     optional: true
