@@ -35,7 +35,7 @@ fi
 
 echo "----- Generate .zkey file (Proving key) -----"
 # Generate a .zkey file that will contain the proving and verification keys together with all phase 2 contributions
-snarkjs groth16 setup ${BUILD}/${CIRCUIT}.r1cs ptau/powersOfTau28_hez_final_${PTAU}.ptau ${FOLDER_PATH}/${CIRCUIT}_0000.zkey
+snarkjs groth16 setup ${BUILD}/${CIRCUIT}.r1cs ptau/ppot_0080_${PTAU}.ptau ${FOLDER_PATH}/${CIRCUIT}_0000.zkey --curve="BLS12-381"
 
 echo "----- Contribute to the phase 2 of the ceremony -----"
 # Contribute to the phase 2 of the ceremony
