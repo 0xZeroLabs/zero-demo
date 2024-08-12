@@ -1,7 +1,7 @@
 {
   "rp": {
-    "id": "localhost",
-    "origin": "https://demo.0xzero.org",
+    "id": "demo.zero.org",
+    "origin": "https://demo.0xzero.org/",
     "name": "ZERO Demo"
   },
   "policies": []
