@@ -169,7 +169,7 @@ const submitPassword = async () => {
     if (!password.value.trim()) {
         formFeedback2.value = "incomplete";
         return;
-    } else if (!(password.value.length >= 8) || !/^[A-Za-z0-9]*$/.test(password.value) || !/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password.value)) {
+    } else if (!(password.value.length >= 8) || !(/^(?=.*[A-Z])/.test(password.value)) || !(/^(?=.*[a-z])/.test(password.value)) || !(/^(?=.*[0-9])/.test(password.value)) || !/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password.value)) {
         formFeedback2.value = "invalid";
         return;
     }
