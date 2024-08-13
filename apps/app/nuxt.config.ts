@@ -62,7 +62,9 @@ export default defineNuxtConfig({
           return { code: modifiedCode, map: null };
         },
       },
-      nodePolyfills({})
+      nodePolyfills({
+        include: ["crypto", "stream", "process"]
+      })
     ],
 
     build: {
