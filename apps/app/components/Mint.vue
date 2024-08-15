@@ -6,7 +6,7 @@
             <span v-else>Mint Identity</span>
         </button>
     </div>
-    <span class="mt-4">{{ address }}</span>
+    <span class="mt-4 max-w-[90%] text-center">{{ address }}</span>
     <MintFeedback :url="url" :formFeedback="(formFeedback as string)" :isLoading="isLoading" />
 </template>
 <script lang="ts" setup>

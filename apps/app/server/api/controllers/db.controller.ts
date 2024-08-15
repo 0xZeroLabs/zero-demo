@@ -29,11 +29,11 @@ export const addUser = async (
     console.error("Invalid data format! Please check and retry.");
     return "error";
   }
-  console.log("here");
   try {
     await db.insert(users).values(validatedData).returning();
     return "success";
   } catch (error) {
+    console.log(error);
     return "error";
   }
 };

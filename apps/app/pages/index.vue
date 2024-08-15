@@ -17,6 +17,8 @@ const showDashboard = ref("visisble");
 const sessionToken = useCookie("auth");
 const address = useCookie("address");
 const zkyc = useCookie("zkyc");
+const user = useCookie("user");
+const userCred = useCookie("userCred");
 
 const mint = ref(false);
 const verified = ref(false);
@@ -86,7 +88,8 @@ onMounted(async () => {
     const res: Ref<any> = ref(response) as Ref<any>;
     zkyc.value = res.value.response[0]
   }, 300);
-  if (zkyc.value) {
+  console.log(!userCred.value)
+  if (zkyc.value && !userCred.value) {
     setTimeout(async () => {
       const { data: response } = await useFetch("api/getCred", {
         method: "post",
@@ -99,9 +102,27 @@ onMounted(async () => {
       });
 
       const res: Ref<any> = ref(response) as Ref<any>;
-      console.log(res.value.response)
+      userCred.value = res.value.response
+
+      console.log(res.value.response.data.credentialSubject.cred.data)
     }, 300);
   }
+  setTimeout(async () => {
+    const { data: response } = await useFetch("api/getUser", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        address: address.value,
+      }
+    });
+
+    const res: Ref<any> = ref(response) as Ref<any>;
+    user.value = res.value.response
+
+    console.log(res.value.response)
+  }, 300);
 });
 </script>
 
