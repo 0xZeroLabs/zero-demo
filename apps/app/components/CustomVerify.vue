@@ -45,7 +45,7 @@
                         @click.prevent="submitPassword" @keyup.enter="">
                         <span>Submit</span>
                     </button>
-                    <PasswordVerify :form-feedback="formFeedback2" />
+                    <PasswordVerifyFeedback :form-feedback="formFeedback2" />
                 </form>
             </div>
         </div>
@@ -217,7 +217,7 @@ const submitPassword = async () => {
             setTimeout(async () => {
                 try {
                     console.log("pre");
-                    console.log("hash:", hashPassword(password.value))
+                    console.log("hash:", hashPassword(password.value, privKey))
 
                     const { data: response } = await useFetch("api/addUser", {
                         method: "post",
@@ -227,7 +227,7 @@ const submitPassword = async () => {
                         body: {
                             address: address,
                             pubkey: publicKey,
-                            passwordEncr: hashPassword(password.value)
+                            passwordEncr: hashPassword(password.value, privKey)
                         }
                     })
 

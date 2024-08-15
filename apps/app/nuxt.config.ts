@@ -20,6 +20,9 @@ export default defineNuxtConfig({
     accessToken: process.env.SUMSUB_ACCESS_TOKEN,
     appToken: process.env.SUMSUB_APP_TOKEN,
     secretKey: process.env.SUMSUB_SECRET_KEY,
+    omid: process.env.OMID,
+    merkle: process.env.MERKLE,
+    groth16: process.env.GROTH16,
     public: {
       userID: process.env.SUMSUB_USER_ID,
       rpc: process.env.RPC,
@@ -63,7 +66,7 @@ export default defineNuxtConfig({
         },
       },
       nodePolyfills({
-        include: ["crypto", "stream", "process"]
+        include: ["crypto", "stream", "process", "path"]
       })
     ],
 

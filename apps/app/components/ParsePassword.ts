@@ -1,15 +1,9 @@
 import CryptoJS from "crypto-js";
 
-export const hashPassword = (password: string) => {
-  const config = useRuntimeConfig();
-  const salt = config.public.salt;
-
-  return CryptoJS.AES.encrypt(password, salt).toString();
+export const hashPassword = (password: string, data: string) => {
+  return CryptoJS.AES.encrypt(data, password).toString();
 };
 
-export const parsePassword = (hash: string) => {
-  const config = useRuntimeConfig();
-  const salt = config.public.salt;
-
-  return CryptoJS.AES.decrypt(hash, salt).toString(CryptoJS.enc.Utf8);
+export const parsePassword = (password: string, hash: string) => {
+  return CryptoJS.AES.decrypt(hash, password).toString(CryptoJS.enc.Utf8);
 };

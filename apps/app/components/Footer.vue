@@ -4,19 +4,20 @@
             <img class="md:hidden z-10" src="@/assets/logo1.svg" />
             <ul
                 class="bg-[#000] min-h-[120px] md:min-h-12 z-10 flex flex-col md:flex-row py-5 md:pb-0 justify-between items-center md:items-start px-10 w-[40%] text-white">
-                <li><a href="/#" class="nav-link">Ecosystem</a></li>
-                <li><a href="/#" class="nav-link">Token</a></li>
-                <li><a href="/#" class="nav-link">About</a></li>
-                <li><a href="/#" class="nav-link">Contact</a></li>
+                <li><nuxt-link to="/" class="nav-link">Dashboard</nuxt-link></li>
+                <li><nuxt-link to="/verify" class="nav-link">Verify Proof</nuxt-link></li>
+                <li><nuxt-link to="https://0xzero.org" class="nav-link">Home Page</nuxt-link></li>
             </ul>
             <div
                 class="bg-[#000] min-h-[120px] z-10 flex flex-col md:pb-0 md:flex-row justify-between items-center px-10 w-full text-white">
 
-                <img class="hidden md:block" src="@/assets/logo1.svg" />
+                <div class="flex w-[136px]">
+                    <img class="hidden md:block" src="@/assets/logo1.svg" />
+                </div>
                 <div class="my-2">
                     <h1 class="text-center">Copyright © 2024 · All Rights Reserved</h1>
                 </div>
-                <div class="flex flex-row justify-between gap-5 items-center text-white">
+                <div class="flex flex-row justify-end gap-5 items-center text-white w-[136px]">
                     <a href="http://" target="_blank" rel="noopener noreferrer">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 640 512"
                             class="w-6 h-6 text-white">

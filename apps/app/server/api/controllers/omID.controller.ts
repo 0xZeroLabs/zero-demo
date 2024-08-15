@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { abi } from "../utils/omID";
 
 const config = useRuntimeConfig();
-const tokenContract = "0x46566A05D468109793CD18afB8D8f67FdEB0a97F";
+const tokenContract = config.omid;
 
 export const mint = async (toAddress: string) => {
   const network = config.public.rpc;
@@ -26,7 +26,7 @@ export const mint = async (toAddress: string) => {
     const receipt = await tx.wait();
 
     let hashData = {
-      url: `https://sepolia.etherscan.io/tx/${tx.hash}`,
+      url: `https://sepolia.scrollscan.io/tx/${tx.hash}`,
       message: `Mined in block ${receipt!.blockNumber}`,
     };
 
@@ -66,7 +66,7 @@ export const verify = async (toAddress: string, zkHash: string) => {
     const receipt = await tx.wait();
 
     let hashData = {
-      url: `https://sepolia.etherscan.io/tx/${tx.hash}`,
+      url: `https://sepolia.scrollscan.io/tx/${tx.hash}`,
       message: `Mined in block ${receipt!.blockNumber}`,
     };
 
