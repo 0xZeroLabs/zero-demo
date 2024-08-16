@@ -10,7 +10,8 @@
                     class="w-full px-3 outline-1 h-[40px] md:h-[48px] border-[0.5px] border-[#fff]/40 text-white mt-5" />
                 <button type="submit"
                     class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
-                    @click.prevent="register" @keyup.enter="" v-if="registerState" :disabled="isLoading||authenticating">
+                    @click.prevent="register" @keyup.enter="" v-if="registerState"
+                    :disabled="isLoading || authenticating">
                     <span v-if="isLoading" class="load">Authenticating..</span>
                     <span v-else-if="authenticating" class="load">Signig In..</span>
                     <span v-else>Authenticate</span>
@@ -23,8 +24,10 @@
                     <span v-else>Sign In</span>
                 </button>
 
-                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select" v-if="registerState">Already have an Account?</span>
-                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select" v-else>Create an Account?</span>
+                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select"
+                    v-if="registerState">Already have an Account?</span>
+                <span @click="toggleButtonState" class="hover:cursor-pointer block mt-2 prevent-select" v-else>Create an
+                    Account?</span>
                 <WaitlistFeedback :formFeedback="(formFeedback as string)" :isLoading="isLoading" />
             </form>
         </div>
@@ -41,7 +44,8 @@ type FormFeedbackType =
     | "invalid"
     | "error"
     | "success"
-    | null;
+    | null
+    | string;
 
 const email = ref("");
 
@@ -61,6 +65,7 @@ const formFeedback: Ref<FormFeedbackType> = ref(null);
 async function authenticate() {
     isLoading.value = true;
     authenticating.value = true;
+    formFeedback.value = null;
 
     email.value = email.value.trim();
 
@@ -68,16 +73,19 @@ async function authenticate() {
     if (!email.value.trim()) {
         formFeedback.value = "incomplete";
         isLoading.value = false;
+        authenticating.value = false;
         return;
     } else if (email.value && !regex.test(email.value)) {
         formFeedback.value = "invalid";
         success.value = false;
         isLoading.value = false;
+        authenticating.value = false;
         return;
     } else if (!consent.value) {
         formFeedback.value = "consent";
         success.value = false;
         isLoading.value = false;
+        authenticating.value = false;
         return;
     } else {
         setTimeout(async () => {
@@ -96,17 +104,19 @@ async function authenticate() {
                     address.value = addr;
                     authenticated.value = true;
                     email.value = "";
+                    reloadNuxtApp();
                 } catch (error) {
                     console.error("Error authenticating:", error);
+                    error == "Error: custom error,context:: Account credential lookup yielded no results, description:: Identifier hash does not match any account credentials"? formFeedback.value = "Email not registered. Please create an account." : formFeedback.value = error as any;
                 } finally {
                     authenticating.value = false;
                     isLoading.value = false;
-                    reloadNuxtApp()
                 }
             }
             catch (error) {
                 success.value = false;
                 isLoading.value = false;
+                authenticating.value = false;
                 formFeedback.value = "error";
             }
         }, 4000);
@@ -159,6 +169,7 @@ const register = async () => {
                     }
                 } catch (error) {
                     console.error("Error registering:", error);
+                    error == "Error: error message: custom error, error data: context:: Duplicate registration attempt, description:: Registration has already been completed for this username on this scope" ? formFeedback.value = "Duplicate registration attempt.  Registration has already been completed for this email." : formFeedback.value = error as any;
                 } finally {
                     registering.value = false;
                     authenticating.value = false;
@@ -179,7 +190,7 @@ let registerState = ref(true)
 const toggleButtonState = () => {
     if (registerState.value && !isLoading.value) {
         registerState.value = false;
-    } else if(!registerState.value && !authenticating.value) {
+    } else if (!registerState.value && !authenticating.value) {
         registerState.value = true;
     }
 }
