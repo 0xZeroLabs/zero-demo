@@ -13,7 +13,8 @@
                     <button type="submit"
                         class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-3 btn"
                         @click.prevent="submitPassword" @keyup.enter="">
-                        <span>Submit</span>
+                        <span v-if="isLoading" class="load">Submitting..</span>
+                        <span v-else>Submit</span>
                     </button>
                     <PasswordVerifyFeedback :form-feedback="formFeedback" />
                 </form>
@@ -32,6 +33,7 @@ const props = defineProps({
 
 const password = ref("");
 const formFeedback = ref("");
+const isLoading = ref(false);
 
 const sessionToken = useCookie("auth");
 const address = useCookie("address");
@@ -55,11 +57,13 @@ const submitPassword = async () => {
 
     console.log(userD, userCred)
 
-    await decrypt(privKey, userCredD.data.credentialSubject.cred.data).then(r => { 
+    await decrypt(privKey, userCredD.data.credentialSubject.cred.data).then(r => {
+        isLoading.value = true;
         userCredD.data.credentialSubject.cred.data = JSON.parse(r);
         userCred.value = userCredD;
         reloadNuxtApp();
-     })
+        isLoading.value = false;
+    })
 }
 
 const getValuesFromObject = (jsonObject: { [key: string]: any }): any[] => {

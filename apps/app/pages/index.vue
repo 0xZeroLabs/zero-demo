@@ -86,11 +86,10 @@ onMounted(async () => {
     });
 
     const res: Ref<any> = ref(response) as Ref<any>;
-    zkyc.value = res.value.response[0]
-  }, 300);
-  console.log(!userCred.value)
-  if (zkyc.value && !userCred.value) {
-    setTimeout(async () => {
+    console.log(res.value)
+    zkyc.value = res.value.response[0];
+
+    if (!userCred.value) {
       const { data: response } = await useFetch("api/getCred", {
         method: "post",
         headers: {
@@ -105,23 +104,23 @@ onMounted(async () => {
       userCred.value = res.value.response
 
       console.log(res.value.response.data.credentialSubject.cred.data)
-    }, 300);
-  }
-  setTimeout(async () => {
-    const { data: response } = await useFetch("api/getUser", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: {
-        address: address.value,
-      }
-    });
+    }
+    if (!user.value) {
+      const { data: response } = await useFetch("api/getUser", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
+          address: address.value,
+        }
+      });
 
-    const res: Ref<any> = ref(response) as Ref<any>;
-    user.value = res.value.response
+      const res: Ref<any> = ref(response) as Ref<any>;
+      user.value = res.value.response
 
-    console.log(res.value.response)
+      console.log(res.value.response)
+    }
   }, 300);
 });
 </script>
