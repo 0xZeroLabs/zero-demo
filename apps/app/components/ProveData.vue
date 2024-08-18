@@ -3,6 +3,7 @@
         <button type="submit" class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
             @click.prevent="decrypt">
             <span v-if="isLoading" class="load">Generating Proof..</span>
+            <span v-else-if="!userCred.data.credentialSubject.cred.data.dob">Unlock Vault</span>
             <span v-else>Generate Proof</span>
         </button>
     </div>
@@ -26,7 +27,7 @@ const isLoading = ref(false);
 const proof = ref("");
 const decrypting = ref(false)
 
-const userCred = useCookie("userCred");
+const userCred = useCookie<any>("userCred");
 
 // check if userCred data is still encrypted to choose between setting the decrypting value to true or just generating proofs
 const decrypt = () => {
