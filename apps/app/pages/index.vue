@@ -72,7 +72,6 @@ onMounted(async () => {
 
     const res: Ref<SendData> = ref(response) as Ref<SendData>;
     verified.value = !res.value.response.pass;
-    isPageLoading.value = false;
   }, 300);
   setTimeout(async () => {
     const { data: response } = await useFetch("api/getSoul", {
@@ -105,6 +104,7 @@ onMounted(async () => {
 
       console.log(res.value.response.data.credentialSubject.cred.data)
     }
+    isPageLoading.value = false;
     if (!user.value) {
       const { data: response } = await useFetch("api/getUser", {
         method: "post",
@@ -120,6 +120,7 @@ onMounted(async () => {
       user.value = res.value.response
 
       console.log(res.value.response)
+
     }
   }, 300);
 });

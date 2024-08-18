@@ -32,7 +32,7 @@ const props = defineProps({
 });
 
 const password = ref("");
-const formFeedback = ref("");
+const formFeedback = ref();
 const isLoading = ref(false);
 
 const sessionToken = useCookie("auth");
@@ -42,6 +42,7 @@ const user = useCookie("user");
 const userCred = useCookie("userCred");
 
 const submitPassword = async () => {
+    formFeedback.value = null;
     if (!password.value.trim()) {
         formFeedback.value = "incomplete";
         return;
@@ -57,13 +58,18 @@ const submitPassword = async () => {
 
     console.log(userD, userCred)
 
-    await decrypt(privKey, userCredD.data.credentialSubject.cred.data).then(r => {
+    try {
         isLoading.value = true;
-        userCredD.data.credentialSubject.cred.data = JSON.parse(r);
-        userCred.value = userCredD;
-        reloadNuxtApp();
+        await decrypt(privKey, userCredD.data.credentialSubject.cred.data).then(r => {
+            userCredD.data.credentialSubject.cred.data = JSON.parse(r);
+            userCred.value = userCredD;
+            isLoading.value = false;
+            formFeedback.value = "success"
+        })
+    } catch (error) {
+        error == "Error: Bad private key" ? formFeedback.value = "Wrong Password!" : formFeedback.value = error as any;
         isLoading.value = false;
-    })
+    }
 }
 
 const getValuesFromObject = (jsonObject: { [key: string]: any }): any[] => {
