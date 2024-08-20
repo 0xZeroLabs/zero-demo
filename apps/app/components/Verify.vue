@@ -4,7 +4,7 @@ import snsWebSdk from '@sumsub/websdk';
 const config = useRuntimeConfig()
 const address = useCookie("address");
 
-const launchWebSdk = async (accessToken) => {
+const launchWebSdk = async (accessToken: string) => {
     let snsWebSdkInstance = snsWebSdk
         .init(
             accessToken,
