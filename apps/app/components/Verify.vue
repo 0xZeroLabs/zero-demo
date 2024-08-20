@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import snsWebSdk from '@sumsub/websdk';
 
-const config = useRuntimeConfig()
-const address = useCookie("address");
+const sumsubT = useCookie("sumsubT", {
+    maxAge: 300,
+});
 
 const launchWebSdk = async (accessToken: string) => {
     let snsWebSdkInstance = snsWebSdk
@@ -47,7 +48,9 @@ const getAccessToken = async () => {
 }
 
 onMounted(async () => {
-    await launchWebSdk(await getAccessToken() as unknown as string)
+    if (!sumsubT.value) sumsubT.value = await getAccessToken();
+    console.log(sumsubT.value)
+    await launchWebSdk(sumsubT.value as unknown as string)
 })
 </script>
 

@@ -78,7 +78,7 @@ export const getAccessToken = async () => {
       return response.data.token;
     })
     .catch(function (error) {
-      console.log("Error:\n", error.response.data);
+      console.log("Error:\n", error);
     });
   return res;
 };
