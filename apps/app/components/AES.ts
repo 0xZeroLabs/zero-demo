@@ -28,7 +28,7 @@ export async function createPasskey(address: string) {
   try {
     const credential = await simplewebauthn.startRegistration(key);
     const pubKey = credential?.response.publicKey;
-    console.log(pubKey);
+    
     credentialId.value = credential?.id;
   } catch (error) {
     console.error("Passkey creation failed:", error);
@@ -41,7 +41,7 @@ export async function authPasskey(address: string) {
   try {
     const credential = await simplewebauthn.startAuthentication(key);
     const pubKey = credential?.response;
-    console.log(pubKey);
+    
     credentialId.value = credential?.id;
   } catch (error) {
     console.error("Passkey creation failed:", error);

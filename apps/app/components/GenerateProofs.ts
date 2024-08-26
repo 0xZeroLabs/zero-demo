@@ -8,7 +8,6 @@ export const generateProof = async (
 ): Promise<any> => {
   const { groth16: groth16 } = await import('snarkjs');
   console.log(`Generating age proof with inputs: ${input0}, ${input1}`);
-  console.log(groth16);
 
   // We need to have the naming scheme and shape of the inputs match the .circom file
   const inputs = {
@@ -72,7 +71,7 @@ export const generateGeneralProofs = async (
   file: string
 ): Promise<any> => {
   const { groth16: groth16, zKey: zKey } = await import('snarkjs');
-  console.log(`Generating age proof with inputs: ${input0}, ${input1}`);
+  
 
   // We need to have the naming scheme and shape of the inputs match the .circom file
   const inputs = {

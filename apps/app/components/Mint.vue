@@ -50,7 +50,7 @@ const mint = async () => {
             res.value.response.url ? formFeedback.value = "success" : formFeedback.value = "error";
             isLoading.value = false;
             url.value = res.value.response.url;
-            console.log(url.value)
+            
             reloadNuxtApp();
         } catch (error) {
             formFeedback.value = "error";

@@ -36,7 +36,7 @@ const isLoading = ref(false)
 const fileData = ref<any>();
 
 const checkFile = (e: any) => {
-    console.log(e.target.files)
+    
     const [file] = e.target!.files;
     const { name: fileN, size } = file;
 
@@ -57,7 +57,7 @@ const onReaderLoad = (e: any) => {
         data.value = "Please provide a valid json file!";
     }
 
-    console.log(fileData.value);
+    
 }
 
 const dragenter = (e: any) => {

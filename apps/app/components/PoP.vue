@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-console.log(global)
+
 import { createPassportClient } from "@0xpass/passport-viem";
 import { http } from "viem";
 import { sepolia } from "viem/chains";
@@ -29,7 +29,7 @@ async function createWalletClient() {
 async function sign(payload: any) {
     try {
         const passport = await createWalletClient();
-        console.log({ account, message: payload })
+        
         const signature = await passport.signMessage({ account: account.value, message: payload });
         return signature;
     } catch (error) {
@@ -40,11 +40,11 @@ async function sign(payload: any) {
 }
 
 const sig = async () => {
-    console.log(await sign("fff"));
+    
 }
 
 function finish({ info, state }: any) {
-    console.log('info', info);
-    console.log('state', state);
+    
+    
 }
 </script>

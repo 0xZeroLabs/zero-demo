@@ -18,10 +18,10 @@ const launchWebSdk = async (accessToken: string) => {
         .withOptions({ addViewportTag: false, adaptIframeHeight: true })
         // see below what kind of messages WebSDK generates
         .on("idCheck.onStepCompleted", (payload) => {
-            console.log("onStepCompleted", payload);
+            
         })
         .on("idCheck.onError", (error) => {
-            console.log("onError", error);
+            
         })
         .build();
 
@@ -49,7 +49,7 @@ const getAccessToken = async () => {
 
 onMounted(async () => {
     if (!sumsubT.value) sumsubT.value = await getAccessToken();
-    console.log(sumsubT.value)
+    
     await launchWebSdk(sumsubT.value as unknown as string)
 })
 </script>

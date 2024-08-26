@@ -181,16 +181,13 @@ const submitPassword = async () => {
         sig: faceSig
     }
     piiArray = getValuesFromObject(pii);
-    console.log(pii)
-    console.log(piiArray)
+    
+    
     zkHash = generateTree(piiArray);
 
     zkHash.then(async (tree) => {
         encrypt(publicKey, JSON.stringify(pii)).then(async (encryptedPii) => {
-            console.log("Encr: ", encryptedPii)
-
-            decrypt(privKey, encryptedPii).then(r => console.log(JSON.parse(r)))
-            console.log(tree.getHexRoot());
+            
             // this is just a sample of what zkSchema would be like
             zkSchema = {
                 "@context": [
@@ -216,8 +213,8 @@ const submitPassword = async () => {
 
             setTimeout(async () => {
                 try {
-                    console.log("pre");
-                    console.log("hash:", hashPassword(password.value, privKey))
+                    
+                    
 
                     const { data: response } = await useFetch("api/addUser", {
                         method: "post",

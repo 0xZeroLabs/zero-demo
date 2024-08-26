@@ -56,7 +56,7 @@ const submitPassword = async () => {
 
     const userCredD = userCred.value as any;
 
-    console.log(userD, userCred)
+    
 
     try {
         isLoading.value = true;

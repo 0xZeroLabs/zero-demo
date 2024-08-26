@@ -32,7 +32,7 @@ const userCred = useCookie<any>("userCred");
 // check if userCred data is still encrypted to choose between setting the decrypting value to true or just generating proofs
 const decrypt = () => {
     const userCredD = userCred.value as any;
-    console.log(userCredD);
+    
     (userCredD.data.credentialSubject.cred.data.dob) ? generate() : decrypting.value = true;
 }
 
@@ -42,7 +42,7 @@ const notLoading = () => {
 
 const generate = async () => {
     const userCredD = userCred.value as any;
-    console.log(userCredD.data.credentialSubject.cred.data)
+    
     try {
         const year1 = separateYear(userCredD.data.credentialSubject.cred.data.dob as string)
 
@@ -54,7 +54,7 @@ const generate = async () => {
         });
 
         const year2 = (await response.json()).response as number;
-        console.log(year2 - year1)
+        
         isLoading.value = true;
         const a = await gen.generateProof(year2 - year1, 18, "gtoeq");
 

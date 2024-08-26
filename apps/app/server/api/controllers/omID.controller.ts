@@ -11,7 +11,7 @@ export const mint = async (toAddress: string) => {
   const contract = new ethers.Contract(tokenContract, abi, provider);
   const signer = new ethers.Wallet(config.privateKey!, provider);
 
-  console.log(toAddress);
+  
   const data = contract.interface.encodeFunctionData("mint", [toAddress]);
 
   // creating and sending the transaction object
@@ -48,7 +48,7 @@ export const verify = async (toAddress: string, zkHash: string) => {
   const contract = new ethers.Contract(tokenContract, abi, provider);
   const signer = new ethers.Wallet(config.privateKey!, provider);
 
-  console.log(zkHash);
+  
   const data = contract.interface.encodeFunctionData("verify", [
     toAddress,
     zkHash,
@@ -87,12 +87,12 @@ export const hasSoul = async (toAddress: string) => {
 
   const contract = new ethers.Contract(tokenContract, abi, provider);
 
-  console.log(toAddress);
+  
 
   // creating and sending the transaction object
   try {
     const _hasSoul = await contract.hasSoul(toAddress);
-    console.log(_hasSoul);
+    
 
     let hashData = {
       pass: _hasSoul,
@@ -116,13 +116,13 @@ export const isVerified = async (toAddress: string) => {
 
   const contract = new ethers.Contract(tokenContract, abi, provider);
 
-  console.log(toAddress);
+  
 
   // creating and sending the transaction object
   try {
     const _isVerified = await contract.isVerified(toAddress);
-    console.log(_isVerified);
-    console.log("data:", (await contract.getSoul(toAddress))[0]);
+    
+    
 
     let hashData = {
       pass: _isVerified,
