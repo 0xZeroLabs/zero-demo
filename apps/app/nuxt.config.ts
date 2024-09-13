@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   devServer: {
     port: 3000,
   },
+  ssr: true,
   colorMode: {
     preference: "dark",
     globalName: "__NUXT_COLOR_MODE__",

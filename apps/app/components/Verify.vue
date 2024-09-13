@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import snsWebSdk from '@sumsub/websdk';
 
-const config = useRuntimeConfig()
-const address = useCookie("address");
+const sumsubT = useCookie("sumsubT", {
+    maxAge: 300,
+});
 
-const launchWebSdk = async (accessToken) => {
+const launchWebSdk = async (accessToken: string) => {
     let snsWebSdkInstance = snsWebSdk
         .init(
             accessToken,
@@ -17,10 +18,10 @@ const launchWebSdk = async (accessToken) => {
         .withOptions({ addViewportTag: false, adaptIframeHeight: true })
         // see below what kind of messages WebSDK generates
         .on("idCheck.onStepCompleted", (payload) => {
-            console.log("onStepCompleted", payload);
+            
         })
         .on("idCheck.onError", (error) => {
-            console.log("onError", error);
+            
         })
         .build();
 
@@ -47,7 +48,9 @@ const getAccessToken = async () => {
 }
 
 onMounted(async () => {
-    await launchWebSdk(await getAccessToken() as unknown as string)
+    if (!sumsubT.value) sumsubT.value = await getAccessToken();
+    
+    await launchWebSdk(sumsubT.value as unknown as string)
 })
 </script>
 

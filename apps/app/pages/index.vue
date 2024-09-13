@@ -7,7 +7,7 @@ import { keccak256, toUtf8Bytes, toUtf8String } from "ethers";
 
 const config = useRuntimeConfig();
 const globalLoc = global.location;
-console.log(globalLoc)
+
 const alchemyUrl = config.public.rpc;
 const fallbackProvider = http(alchemyUrl) as unknown as any;
 
@@ -72,7 +72,6 @@ onMounted(async () => {
 
     const res: Ref<SendData> = ref(response) as Ref<SendData>;
     verified.value = !res.value.response.pass;
-    isPageLoading.value = false;
   }, 300);
   setTimeout(async () => {
     const { data: response } = await useFetch("api/getSoul", {
@@ -86,7 +85,7 @@ onMounted(async () => {
     });
 
     const res: Ref<any> = ref(response) as Ref<any>;
-    console.log(res.value)
+    
     zkyc.value = res.value.response[0];
 
     if (!userCred.value) {
@@ -101,10 +100,9 @@ onMounted(async () => {
       });
 
       const res: Ref<any> = ref(response) as Ref<any>;
-      userCred.value = res.value.response
-
-      console.log(res.value.response.data.credentialSubject.cred.data)
+      userCred.value = res.value.response;
     }
+    isPageLoading.value = false;
     if (!user.value) {
       const { data: response } = await useFetch("api/getUser", {
         method: "post",
@@ -119,7 +117,8 @@ onMounted(async () => {
       const res: Ref<any> = ref(response) as Ref<any>;
       user.value = res.value.response
 
-      console.log(res.value.response)
+      
+
     }
   }, 300);
 });

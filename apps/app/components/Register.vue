@@ -59,7 +59,7 @@ const sessionToken = useCookie<{}>("auth")
 const address = useCookie<string>("address");
 const { passport } = usePassport(config.public.scope as string);
 
-console.log(passport)
+
 const formFeedback: Ref<FormFeedbackType> = ref(null);
 
 async function authenticate() {
@@ -156,7 +156,7 @@ const register = async () => {
                 try {
                     await passport.setupEncryption();
                     const res = await passport.register(userInput.value);
-                    console.log(res);
+                    
 
                     formFeedback.value = "success";
                     success.value = true;

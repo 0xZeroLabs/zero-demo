@@ -4,7 +4,7 @@ import fs from "fs";
 import FormData from "form-data";
 
 const _config = useRuntimeConfig();
-console.log(config);
+
 
 const SUMSUB_APP_TOKEN = _config.appToken as string;
 const SUMSUB_SECRET_KEY = _config.secretKey as string;
@@ -18,7 +18,7 @@ axios.interceptors.request.use(createSignature, function (error) {
 });
 
 function createSignature(config: any) {
-  console.log("Creating a signature for the request...");
+  
 
   var ts = Math.floor(Date.now() / 1000);
   const signature = crypto.createHmac("sha256", SUMSUB_SECRET_KEY);
@@ -29,7 +29,7 @@ function createSignature(config: any) {
   } else if (config.data) {
     signature.update(config.data);
   }
-  console.log(config.data);
+  
   config.headers["X-App-Access-Ts"] = ts;
   config.headers["X-App-Access-Sig"] = signature.digest("hex");
 
@@ -41,7 +41,7 @@ const createAccessToken = (
   levelName = "basic-kyc-level",
   ttlInSecs = 600
 ) => {
-  console.log("Creating an access token for initializng SDK...");
+  
 
   var method = "post";
   var url =
@@ -69,7 +69,7 @@ export const getAccessToken = async () => {
   const externalUserId =
     "random-JSToken-" + Math.random().toString(36).substr(2, 9);
   const levelName = "basic-kyc-level";
-  console.log("External UserID: ", externalUserId);
+  
   let res;
 
   await axios(createAccessToken(externalUserId, levelName, 1200))
@@ -78,7 +78,7 @@ export const getAccessToken = async () => {
       return response.data.token;
     })
     .catch(function (error) {
-      console.log("Error:\n", error.response.data);
+      console.log("Error:\n", error);
     });
   return res;
 };

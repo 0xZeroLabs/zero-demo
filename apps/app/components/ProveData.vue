@@ -3,6 +3,7 @@
         <button type="submit" class="w-full h-[40px] md:h-[48px] border-[0.5px] border-[#fff] text-white mt-6 btn"
             @click.prevent="decrypt">
             <span v-if="isLoading" class="load">Generating Proof..</span>
+            <span v-else-if="!userCred.data.credentialSubject.cred.data.dob">Unlock Vault</span>
             <span v-else>Generate Proof</span>
         </button>
     </div>
@@ -26,12 +27,12 @@ const isLoading = ref(false);
 const proof = ref("");
 const decrypting = ref(false)
 
-const userCred = useCookie("userCred");
+const userCred = useCookie<any>("userCred");
 
 // check if userCred data is still encrypted to choose between setting the decrypting value to true or just generating proofs
 const decrypt = () => {
     const userCredD = userCred.value as any;
-    console.log(userCredD);
+    
     (userCredD.data.credentialSubject.cred.data.dob) ? generate() : decrypting.value = true;
 }
 
@@ -41,7 +42,7 @@ const notLoading = () => {
 
 const generate = async () => {
     const userCredD = userCred.value as any;
-    console.log(userCredD.data.credentialSubject.cred.data)
+    
     try {
         const year1 = separateYear(userCredD.data.credentialSubject.cred.data.dob as string)
 
@@ -53,7 +54,7 @@ const generate = async () => {
         });
 
         const year2 = (await response.json()).response as number;
-        console.log(year2 - year1)
+        
         isLoading.value = true;
         const a = await gen.generateProof(year2 - year1, 18, "gtoeq");
 
