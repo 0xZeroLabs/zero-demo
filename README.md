@@ -1,6 +1,6 @@
 # ZERO Labs Mono
 
-[![Publish Apps to DockerHub and Koyeb](https://github.com/ZeroFi-Labs/zero-mono/actions/workflows/publish-images-for-apps.yml/badge.svg)](https://github.com/ZeroFi-Labs/zero-mono/actions/workflows/publish-images-for-apps.yml)
+### Due to the sun-setting of Passport Protocol by [0xPass](https://0xpass.io), the prototype here might not run as expected!
 
 Welcome to the base of all of our code. Feel free to look around.
 
